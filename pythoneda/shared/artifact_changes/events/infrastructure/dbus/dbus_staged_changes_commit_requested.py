@@ -21,7 +21,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 from dbus_next import Message
 from dbus_next.service import ServiceInterface, signal
 import json
-from pythoneda.shared.artifact_changes import Change
+from pythoneda.shared.artifact_changes.change import Change
 from pythoneda.shared.artifact_changes.events.staged_changes_commit_requested import StagedChangesCommitRequested
 from pythoneda.shared.artifact_changes.events.infrastructure.dbus import DBUS_PATH
 from typing import List
