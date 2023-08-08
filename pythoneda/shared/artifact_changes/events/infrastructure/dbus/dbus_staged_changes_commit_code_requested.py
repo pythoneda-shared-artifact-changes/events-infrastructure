@@ -1,7 +1,7 @@
 """
-pythoneda/shared/artifact_changes/events/infrastructure/dbus/dbus_staged_changes_commit_requested.py
+pythoneda/shared/artifact_changes/events/infrastructure/dbus/dbus_staged_changes_commit_code_requested.py
 
-This file defines the DbusStagedChangesCommitRequested class.
+This file defines the DbusStagedChangesCommitCodeRequested class.
 
 Copyright (C) 2023-today rydnr's pythoneda-shared-artifact-changes/events-infrastructure
 
@@ -21,19 +21,19 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 from dbus_next import Message
 from dbus_next.service import ServiceInterface, signal
 import json
-from pythoneda.shared.artifact_changes.change import Change
-from pythoneda.shared.artifact_changes.events.staged_changes_commit_requested import StagedChangesCommitRequested
+from pythoneda.shared.artifact_changes import Change
+from pythoneda.shared.artifact_changes.events import StagedChangesCommitCodeRequested
 from pythoneda.shared.artifact_changes.events.infrastructure.dbus import DBUS_PATH
 from typing import List
 
-class DbusStagedChangesCommitRequested(ServiceInterface):
+class DbusStagedChangesCommitCodeRequested(ServiceInterface):
     """
-    D-Bus interface for StagedChangesCommitRequested
+    D-Bus interface for StagedChangesCommitCodeRequested
 
-    Class name: DbusStagedChangesCommitRequested
+    Class name: DbusStagedChangesCommitCodeRequested
 
     Responsibilities:
-        - Define the d-bus interface for the StagedChangesCommitRequested event.
+        - Define the d-bus interface for the StagedChangesCommitCodeRequested event.
 
     Collaborators:
         - None
@@ -41,14 +41,14 @@ class DbusStagedChangesCommitRequested(ServiceInterface):
 
     def __init__(self):
         """
-        Creates a new DbusStagedChangesCommitRequested.
+        Creates a new DbusStagedChangesCommitCodeRequested.
         """
-        super().__init__("pythonedaartifactchanges_StagedChangesCommitRequested")
+        super().__init__("pythoneda_artifactchanges_StagedChangesCommitCodeRequested")
 
     @signal()
-    def StagedChangesCommitRequested(self, change: "s"):
+    def StagedChangesCommitCodeRequested(self, change: "s"):
         """
-        Defines the StagedChangesCommitRequested d-bus signal.
+        Defines the StagedChangesCommitCodeRequested d-bus signal.
         :param change: The change.
         :type change: str
         """
@@ -64,41 +64,41 @@ class DbusStagedChangesCommitRequested(ServiceInterface):
         return DBUS_PATH
 
     @classmethod
-    def transform_StagedChangesCommitRequested(
-        self, event: StagedChangesCommitRequested
+    def transform(
+        self, event: StagedChangesCommitCodeRequested
     ) -> List[str]:
         """
         Transforms given event to signal parameters.
         :param event: The event to transform.
-        :type event: pythonedaartifacteventchanges.staged_changes_commit_requested.StagedChangesCommitRequested
+        :type event: pythoneda.shared.artifact_changes.events.StagedChangesCommitCodeRequested
         :return: The event information.
         :rtype: List[str]
         """
         return [event.message, event.repository_url, event.branch, event.repository_folder, event.id, json.dumps(event.previous_event_ids)]
 
     @classmethod
-    def signature_for_StagedChangesCommitRequested(cls, event: StagedChangesCommitRequested) -> str:
+    def signature(cls, event: StagedChangesCommitCodeRequested) -> str:
         """
         Retrieves the signature for the parameters of given event.
         :param event: The domain event.
-        :type event: pythonedaartifacteventchanges.staged_changes_commit_requested.StagedChangesCommitRequested
+        :type event: pythoneda.shared.artifact_changes.events.StagedChangesCommitCodeRequested
         :return: The signature.
         :rtype: str
         """
         return "ssssss"
 
     @classmethod
-    def parse_pythonedaartifactchanges_StagedChangesCommitRequested(
+    def parse(
         cls, message: Message
-    ) -> StagedChangesCommitRequested:
+    ) -> StagedChangesCommitCodeRequested:
         """
-        Parses given d-bus message containing a StagedChangesCommitRequested event.
+        Parses given d-bus message containing a StagedChangesCommitCodeRequested event.
         :param message: The message.
         :type message: dbus_next.Message
-        :return: The StagedChangesCommitRequested event.
-        :rtype: pythonedaartifacteventchanges.staged_changes_commit_requested.StagedChangesCommitRequested
+        :return: The StagedChangesCommitCodeRequested event.
+        :rtype: pythoneda.shared.artifact_changes.StagedChangesCommitCodeRequested
         """
         msg, repository_url, branch, repository_folder, event_id, prev_event_ids = message.body
-        return StagedChangesCommitRequested(
+        return StagedChangesCommitCodeRequested(
             msg, repository_url, branch, repository_folder, None, event_id, json.loads(prev_event_ids)
         )

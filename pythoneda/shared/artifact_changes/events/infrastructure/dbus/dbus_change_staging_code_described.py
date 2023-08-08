@@ -1,7 +1,7 @@
 """
-pythoneda/shared/artifact_changes/events/infrastructure/dbus/dbus_change_staging_requested.py
+pythoneda/shared/artifact_changes/events/infrastructure/dbus/dbus_change_staging_code_described.py
 
-This file defines the DbusChangeStagingRequested class.
+This file defines the DbusChangeStagingCodeDescribed class.
 
 Copyright (C) 2023-today rydnr's pythoneda-shared-artifact-changes/events-infrastructure
 
@@ -21,19 +21,19 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 from dbus_next import Message
 from dbus_next.service import ServiceInterface, signal
 import json
-from pythoneda.shared.artifact_changes.change import Change
-from pythoneda.shared.artifact_changes.events.change_staging_requested import ChangeStagingRequested
+from pythoneda.shared.code_requests import CodeRequest
+from pythoneda.shared.artifact_changes.events import ChangeStagingCodeDescribed
 from pythoneda.shared.artifact_changes.events.infrastructure.dbus import DBUS_PATH
 from typing import List
 
-class DbusChangeStagingRequested(ServiceInterface):
+class DbusChangeStagingCodeDescribed(ServiceInterface):
     """
-    D-Bus interface for ChangeStagingRequested
+    D-Bus interface for ChangeStagingCodeDescribed
 
-    Class name: DbusChangeStagingRequested
+    Class name: DbusChangeStagingCodeDescribed
 
     Responsibilities:
-        - Define the d-bus interface for the ChangeStagingRequested event.
+        - Define the d-bus interface for the ChangeStagingCodeDescribed event.
 
     Collaborators:
         - None
@@ -41,14 +41,14 @@ class DbusChangeStagingRequested(ServiceInterface):
 
     def __init__(self):
         """
-        Creates a new DbusChangeStagingRequested.
+        Creates a new DbusChangeStagingCodeDescribed.
         """
-        super().__init__("pythonedaartifactchanges_ChangeStagingRequested")
+        super().__init__("pythoneda_shared_artifactchanges_events_ChangeStagingCodeDescribed")
 
     @signal()
-    def ChangeStagingRequested(self, change: "s"):
+    def ChangeStagingCodeDescribed(self, change: "s"):
         """
-        Defines the ChangeStagingRequested d-bus signal.
+        Defines the ChangeStagingDescribed d-bus signal.
         :param change: The change.
         :type change: str
         """
@@ -64,35 +64,37 @@ class DbusChangeStagingRequested(ServiceInterface):
         return DBUS_PATH
 
     @classmethod
-    def transform_ChangeStagingRequested(self, event: ChangeStagingRequested) -> List[str]:
+    def transform(self, event: ChangeStagingCodeDescribed) -> List[str]:
         """
         Transforms given event to signal parameters.
         :param event: The event to transform.
-        :type event: pythonedaartifacteventchanges.change_staging_requested.ChangeStagingRequested
+        :type event: pythoneda.shared.artifact_changes.events.change_staging_code_described.ChangeStagingCodeDescribed
         :return: The event information.
         :rtype: List[str]
         """
-        return [ str(event.change), event.id, json.dumps(event.previous_event_ids) ]
+        return [str(event.code_request), event.id, json.dumps(event.previous_event_ids)]
 
     @classmethod
-    def signature_for_ChangeStagingRequested(cls, event: ChangeStagingRequested) -> str:
+    def sign(cls, event: ChangeStagingCodeDescribed) -> str:
         """
         Retrieves the signature for the parameters of given event.
         :param event: The domain event.
-        :type event: pythonedaartifacteventchanges.change_staging_requested.ChangeStagingRequested
+        :type event: pythoneda.shared.artifact_changes.events.change_staging_code_described.ChangeStagingCodeDescribed
         :return: The signature.
         :rtype: str
         """
-        return 'sss'
+        return "sss"
 
     @classmethod
-    def parse_pythonedaartifactchanges_ChangeStagingRequested(cls, message: Message) -> ChangeStagingRequested:
+    def parse(cls, message: Message) -> ChangeStagingCodeDescribed:
         """
-        Parses given d-bus message containing a ChangeStagingRequested event.
+        Parses given d-bus message containing a ChangeStagingCodeDescribed event.
         :param message: The message.
         :type message: dbus_next.Message
-        :return: The ChangeStagingRequested event.
-        :rtype: pythonedaartifacteventchanges.change_staging_requested.ChangeStagingRequested
+        :return: The ChangeStagingDescribed event.
+        :rtype: pythoneda.shared.artifact_changes.events.change_staging_code_described.ChangeStagingCodeDescribed
         """
-        change_json, event_id, prev_event_ids = message.body
-        return ChangeStagingRequested(Change.from_json(change_json), None, event_id, json.loads(prev_event_ids))
+        code_request_json, event_id, prev_event_ids = message.body
+        return ChangeStagingCodeDescribed(
+            CodeRequest.from_json(code_request_json), None, event_id, json.loads(prev_event_ids)
+        )

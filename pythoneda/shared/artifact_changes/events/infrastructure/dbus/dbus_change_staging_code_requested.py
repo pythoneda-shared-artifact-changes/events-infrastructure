@@ -1,7 +1,7 @@
 """
-pythoneda/shared/artifact_changes/events/infrastructure/dbus/dbus_change_staged.py
+pythoneda/shared/artifact_changes/events/infrastructure/dbus/dbus_change_staging_code_requested.py
 
-This file defines the DbusChangeStaged class.
+This file defines the DbusChangeStagingCodeRequested class.
 
 Copyright (C) 2023-today rydnr's pythoneda-shared-artifact-changes/events-infrastructure
 
@@ -21,18 +21,19 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 from dbus_next import Message
 from dbus_next.service import ServiceInterface, signal
 import json
-from pythoneda.shared.artifact_changes.events import ChangeStaged
+from pythoneda.shared.artifact_changes import Change
+from pythoneda.shared.artifact_changes.events import ChangeStagingCodeRequested
 from pythoneda.shared.artifact_changes.events.infrastructure.dbus import DBUS_PATH
 from typing import List
 
-class DbusChangeStaged(ServiceInterface):
+class DbusChangeStagingCodeRequested(ServiceInterface):
     """
-    D-Bus interface for ChangeStaged
+    D-Bus interface for ChangeStagingCodeRequested
 
-    Class name: DbusChangeStaged
+    Class name: DbusChangeStagingCodeRequested
 
     Responsibilities:
-        - Define the d-bus interface for the ChangeStaged event.
+        - Define the d-bus interface for the ChangeStagingCodeRequested event.
 
     Collaborators:
         - None
@@ -40,14 +41,14 @@ class DbusChangeStaged(ServiceInterface):
 
     def __init__(self):
         """
-        Creates a new DbusChangeStaged.
+        Creates a new DbusChangeStagingCodeRequested.
         """
-        super().__init__("pythonedaartifactchanges_ChangeStaged")
+        super().__init__("pythoneda_shared_artifactchanges_events_ChangeStagingCodeRequested")
 
     @signal()
-    def ChangeStaged(self, change: "s"):
+    def ChangeStagingCodeRequested(self, change: "s"):
         """
-        Defines the ChangeStaged d-bus signal.
+        Defines the ChangeStagingRequested d-bus signal.
         :param change: The change.
         :type change: str
         """
@@ -63,35 +64,35 @@ class DbusChangeStaged(ServiceInterface):
         return DBUS_PATH
 
     @classmethod
-    def transform_ChangeStaged(cls, event: ChangeStaged) -> List[str]:
+    def transform(self, event: ChangeStagingCodeRequested) -> List[str]:
         """
         Transforms given event to signal parameters.
         :param event: The event to transform.
-        :type event: pythonedaartifacteventchanges.change_staged.ChangeStaged
+        :type event: pythoneda.shared.artifact_changes.events.change_staging_code_requested.ChangeStagingCodeRequested
         :return: The event information.
         :rtype: List[str]
         """
-        return [ json.dumps(event.change), event.id, json.dumps(event.previous_event_ids) ]
+        return [ str(event.change), event.id, json.dumps(event.previous_event_ids) ]
 
     @classmethod
-    def signature_for_ChangeStaged(cls, event: ChangeStaged) -> str:
+    def sign(cls, event: ChangeStagingCodeRequested) -> str:
         """
         Retrieves the signature for the parameters of given event.
         :param event: The domain event.
-        :type event: pythonedaartifacteventchanges.change_staged.ChangeStaged
+        :type event: pythoneda.shared.artifact_changes.events.change_staging_code_requested.ChangeStagingCodeRequested
         :return: The signature.
         :rtype: str
         """
-        return 's'
+        return 'sss'
 
     @classmethod
-    def parse_pythonedaartifactchanges_ChangeStaged(cls, message: Message) -> ChangeStaged:
+    def parse(cls, message: Message) -> ChangeStagingCodeRequested:
         """
-        Parses given d-bus message containing a ChangeStaged event.
+        Parses given d-bus message containing a ChangeStagingCodeRequested event.
         :param message: The message.
         :type message: dbus_next.Message
-        :return: The ChangeStaged event.
-        :rtype: pythonedaartifacteventchanges.change_staged.ChangeStaged
+        :return: The ChangeStagingRequested event.
+        :rtype: pythoneda.shared.artifact_changes.events.change_staging_code_requested.ChangeStagingCodeRequested
         """
-        change, event_id, prev_event_ids = message.body
-        return ChangeStaged(json.loads(change), None, event_id, json.loads(prev_event_ids))
+        change_json, event_id, prev_event_ids = message.body
+        return ChangeStagingCodeRequested(Change.from_json(change_json), None, event_id, json.loads(prev_event_ids))

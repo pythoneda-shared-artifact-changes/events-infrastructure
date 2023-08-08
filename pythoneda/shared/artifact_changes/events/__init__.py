@@ -19,3 +19,11 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 __path__ = __import__('pkgutil').extend_path(__path__, __name__)
+
+# Ugly hack to avoid sorting the PYTHONPATH
+from pythoneda.shared.artifact_changes.events.change_committed import ChangeCommitted
+from pythoneda.shared.artifact_changes.events.change_staged import ChangeStaged
+from pythoneda.shared.artifact_changes.events.change_staging_code_described import ChangeStagingCodeDescribed
+from pythoneda.shared.artifact_changes.events.change_staging_code_requested import ChangeStagingCodeRequested
+from pythoneda.shared.artifact_changes.events.change_staging_from_folder_requested import ChangeStagingFromFolderRequested
+from pythoneda.shared.artifact_changes.events.staged_changes_commit_code_requested import StagedChangesCommitCodeRequested
