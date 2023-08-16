@@ -21,4 +21,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 __path__ = __import__('pkgutil').extend_path(__path__, __name__)
 
 # Ugly hack to avoid sorting the PYTHONPATH
-from pythoneda.shared.artifact_changes.change import Change
+try:
+    from pythoneda.shared.artifact_changes.change import Change
+except ImportError:
+    pass
