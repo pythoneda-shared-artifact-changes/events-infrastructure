@@ -21,12 +21,13 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 from dbus_next import Message
 from dbus_next.service import ServiceInterface, signal
 import json
+from pythoneda import BaseObject
 from pythoneda.shared.artifact_changes import Change
 from pythoneda.shared.artifact_changes.events import StagedChangesCommitCodeRequested
 from pythoneda.shared.artifact_changes.events.infrastructure.dbus import DBUS_PATH
 from typing import List
 
-class DbusStagedChangesCommitCodeRequested(ServiceInterface):
+class DbusStagedChangesCommitCodeRequested(BaseObject, ServiceInterface):
     """
     D-Bus interface for StagedChangesCommitCodeRequested
 
@@ -43,7 +44,7 @@ class DbusStagedChangesCommitCodeRequested(ServiceInterface):
         """
         Creates a new DbusStagedChangesCommitCodeRequested.
         """
-        super().__init__("pythoneda_artifactchanges_StagedChangesCommitCodeRequested")
+        super().__init__("pythoneda_shared_artifactchanges_events_StagedChangesCommitCodeRequested")
 
     @signal()
     def StagedChangesCommitCodeRequested(self, change: "s"):
