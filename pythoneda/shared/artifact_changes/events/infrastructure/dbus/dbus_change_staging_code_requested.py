@@ -44,7 +44,7 @@ class DbusChangeStagingCodeRequested(BaseObject, ServiceInterface):
         """
         Creates a new DbusChangeStagingCodeRequested.
         """
-        super().__init__("pythoneda_shared_artifactchanges_events_ChangeStagingCodeRequested")
+        super().__init__("Pythoneda_Shared_artifact_changes_Events_ChangeStagingCodeRequested")
 
     @signal()
     def ChangeStagingCodeRequested(self, change: "s"):
