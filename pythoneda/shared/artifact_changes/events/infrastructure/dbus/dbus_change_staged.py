@@ -43,7 +43,7 @@ class DbusChangeStaged(BaseObject, ServiceInterface):
         """
         Creates a new DbusChangeStaged.
         """
-        super().__init__("pythoneda_shared_artifactchanges_events_ChangeStaged")
+        super().__init__("Pythoneda_Shared_artifact_changes_Events_ChangeStaged")
 
     @signal()
     def ChangeStaged(self, change: "s"):
@@ -68,7 +68,7 @@ class DbusChangeStaged(BaseObject, ServiceInterface):
         """
         Transforms given event to signal parameters.
         :param event: The event to transform.
-        :type event: pythonedaartifacteventchanges.change_staged.ChangeStaged
+        :type event: pythoneda.shared.artifact_changes.events.ChangeStaged
         :return: The event information.
         :rtype: List[str]
         """
@@ -79,7 +79,7 @@ class DbusChangeStaged(BaseObject, ServiceInterface):
         """
         Retrieves the signature for the parameters of given event.
         :param event: The domain event.
-        :type event: pythonedaartifacteventchanges.change_staged.ChangeStaged
+        :type event: pythoneda.shared.artifact_changes.events.ChangeStaged
         :return: The signature.
         :rtype: str
         """
@@ -92,7 +92,7 @@ class DbusChangeStaged(BaseObject, ServiceInterface):
         :param message: The message.
         :type message: dbus_next.Message
         :return: The ChangeStaged event.
-        :rtype: pythonedaartifacteventchanges.change_staged.ChangeStaged
+        :rtype event: pythoneda.shared.artifact_changes.events.ChangeStaged
         """
         change, event_id, prev_event_ids = message.body
         return ChangeStaged(json.loads(change), None, event_id, json.loads(prev_event_ids))

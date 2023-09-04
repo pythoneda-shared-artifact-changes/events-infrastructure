@@ -69,7 +69,7 @@ class DbusChangeStagingCodeRequested(BaseObject, ServiceInterface):
         """
         Transforms given event to signal parameters.
         :param event: The event to transform.
-        :type event: pythoneda.shared.artifact_changes.events.change_staging_code_requested.ChangeStagingCodeRequested
+        :type event: pythoneda.shared.artifact_changes.events.ChangeStagingCodeRequested
         :return: The event information.
         :rtype: List[str]
         """
@@ -80,7 +80,7 @@ class DbusChangeStagingCodeRequested(BaseObject, ServiceInterface):
         """
         Retrieves the signature for the parameters of given event.
         :param event: The domain event.
-        :type event: pythoneda.shared.artifact_changes.events.change_staging_code_requested.ChangeStagingCodeRequested
+        :type event: pythoneda.shared.artifact_changes.events.ChangeStagingCodeRequested
         :return: The signature.
         :rtype: str
         """
@@ -93,7 +93,7 @@ class DbusChangeStagingCodeRequested(BaseObject, ServiceInterface):
         :param message: The message.
         :type message: dbus_next.Message
         :return: The ChangeStagingRequested event.
-        :rtype: pythoneda.shared.artifact_changes.events.change_staging_code_requested.ChangeStagingCodeRequested
+        :rtype: pythoneda.shared.artifact_changes.events.ChangeStagingCodeRequested
         """
         change_json, event_id, prev_event_ids = message.body
         return ChangeStagingCodeRequested(Change.from_json(change_json), None, event_id, json.loads(prev_event_ids))

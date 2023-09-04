@@ -20,7 +20,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 __path__ = __import__('pkgutil').extend_path(__path__, __name__)
 
-DBUS_PATH = "/pythoneda/artifact/changes"
+DBUS_PATH = "/pythoneda/shared/artifact_changes"
 
 from .dbus_change_staged import DbusChangeStaged
 from .dbus_change_staging_code_described import DbusChangeStagingCodeDescribed

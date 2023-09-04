@@ -44,7 +44,7 @@ class DbusStagedChangesCommitted(BaseObject, ServiceInterface):
         """
         Creates a new DbusStagedChangesCommitted.
         """
-        super().__init__("pythoneda_shared_artifactchanges_events_StagedChangesCommitted")
+        super().__init__("Pythoneda_Shared_artifact_changes_Events_StagedChangesCommitted")
 
     @signal()
     def StagedChangesCommitted(self, change: "s"):
@@ -71,7 +71,7 @@ class DbusStagedChangesCommitted(BaseObject, ServiceInterface):
         """
         Transforms given event to signal parameters.
         :param event: The event to transform.
-        :type event: pythonedaartifacteventchanges.change_staging_requested.StagedChangesCommitted
+        :type event: pythoneda.shared.artifact_changes.events.StagedChangesCommitted
         :return: The event information.
         :rtype: List[str]
         """
@@ -91,7 +91,7 @@ class DbusStagedChangesCommitted(BaseObject, ServiceInterface):
         """
         Retrieves the signature for the parameters of given event.
         :param event: The domain event.
-        :type event: pythonedaartifacteventchanges.change_staging_requested.StagedChangesCommitted
+        :type event: pythoneda.shared.artifact_changes.events.StagedChangesCommitted
         :return: The signature.
         :rtype: str
         """

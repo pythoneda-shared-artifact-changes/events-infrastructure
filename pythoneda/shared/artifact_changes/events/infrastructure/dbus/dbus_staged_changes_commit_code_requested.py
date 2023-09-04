@@ -44,7 +44,7 @@ class DbusStagedChangesCommitCodeRequested(BaseObject, ServiceInterface):
         """
         Creates a new DbusStagedChangesCommitCodeRequested.
         """
-        super().__init__("pythoneda_shared_artifactchanges_events_StagedChangesCommitCodeRequested")
+        super().__init__("Pythoneda_Shared_artifact_changes_Events_StagedChangesCommitCodeRequested")
 
     @signal()
     def StagedChangesCommitCodeRequested(self, change: "s"):
@@ -97,7 +97,7 @@ class DbusStagedChangesCommitCodeRequested(BaseObject, ServiceInterface):
         :param message: The message.
         :type message: dbus_next.Message
         :return: The StagedChangesCommitCodeRequested event.
-        :rtype: pythoneda.shared.artifact_changes.StagedChangesCommitCodeRequested
+        :rtype: pythoneda.shared.artifact_changes.events.StagedChangesCommitCodeRequested
         """
         msg, repository_url, branch, repository_folder, event_id, prev_event_ids = message.body
         return StagedChangesCommitCodeRequested(
