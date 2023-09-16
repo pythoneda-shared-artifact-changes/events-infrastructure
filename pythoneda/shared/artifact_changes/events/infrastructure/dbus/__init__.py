@@ -23,6 +23,7 @@ __path__ = __import__('pkgutil').extend_path(__path__, __name__)
 DBUS_PATH = "/pythoneda/shared/artifact_changes"
 
 from .dbus_change_staged import DbusChangeStaged
+from .dbus_change_staging_code_packaged import DbusChangeStagingCodePackaged
 from .dbus_change_staging_code_described import DbusChangeStagingCodeDescribed
 from .dbus_change_staging_code_requested import DbusChangeStagingCodeRequested
 from .dbus_staged_changes_committed import DbusStagedChangesCommitted
