@@ -22,7 +22,7 @@ from dbus_next import Message
 from dbus_next.service import ServiceInterface, signal
 import json
 from pythoneda import BaseObject
-from pythoneda.shared.code_requests.jupyter import JupyterCodeRequest
+from pythoneda.shared.code_requests.jupyterlab import JupyterlabCodeRequest
 from pythoneda.shared.artifact_changes.events import ChangeStagingCodeDescribed
 from pythoneda.shared.artifact_changes.events.infrastructure.dbus import DBUS_PATH
 from typing import List
@@ -97,5 +97,5 @@ class DbusChangeStagingCodeDescribed(BaseObject, ServiceInterface):
         """
         code_request_json, event_id, prev_event_ids = message.body
         return ChangeStagingCodeDescribed(
-            JupyterCodeRequest.from_json(code_request_json), None, event_id, json.loads(prev_event_ids)
+            JupyterlabCodeRequest.from_json(code_request_json), None, event_id, json.loads(prev_event_ids)
         )

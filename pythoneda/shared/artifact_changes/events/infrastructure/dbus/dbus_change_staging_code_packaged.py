@@ -22,7 +22,7 @@ from dbus_next import Message
 from dbus_next.service import ServiceInterface, signal
 import json
 from pythoneda import BaseObject
-from pythoneda.shared.code_requests.jupyter import JupyterlabNixFlake
+from pythoneda.shared.code_requests.jupyterlab import JupyterlabCodeRequestNixFlake
 from pythoneda.shared.artifact_changes.events import ChangeStagingCodePackaged
 from pythoneda.shared.artifact_changes.events.infrastructure.dbus import DBUS_PATH
 from typing import List
@@ -104,7 +104,7 @@ class DbusChangeStagingCodePackaged(BaseObject, ServiceInterface):
         """
         nix_flake_json, event_id, prev_event_ids = message.body
         return ChangeStagingCodePackaged(
-            JupyterlabNixFlake.from_json(nix_flake_json),
+            JupyterlabCodeRequestNixFlake.from_json(nix_flake_json),
             None,
             event_id,
             json.loads(prev_event_ids),
