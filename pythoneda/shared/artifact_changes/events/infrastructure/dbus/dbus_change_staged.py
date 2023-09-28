@@ -64,7 +64,7 @@ class DbusChangeStaged(BaseObject, ServiceInterface):
         return DBUS_PATH
 
     @classmethod
-    def transform_ChangeStaged(cls, event: ChangeStaged) -> List[str]:
+    def transform(cls, event: ChangeStaged) -> List[str]:
         """
         Transforms given event to signal parameters.
         :param event: The event to transform.
@@ -72,10 +72,10 @@ class DbusChangeStaged(BaseObject, ServiceInterface):
         :return: The event information.
         :rtype: List[str]
         """
-        return [ json.dumps(event.change), event.id, json.dumps(event.previous_event_ids) ]
+        return [ event.change.to_json(), event.id, json.dumps(event.previous_event_ids) ]
 
     @classmethod
-    def signature_for_ChangeStaged(cls, event: ChangeStaged) -> str:
+    def sign(cls, event: ChangeStaged) -> str:
         """
         Retrieves the signature for the parameters of given event.
         :param event: The domain event.
@@ -83,10 +83,10 @@ class DbusChangeStaged(BaseObject, ServiceInterface):
         :return: The signature.
         :rtype: str
         """
-        return 's'
+        return 'sss'
 
     @classmethod
-    def parse_pythonedaartifactchanges_ChangeStaged(cls, message: Message) -> ChangeStaged:
+    def parse(cls, message: Message) -> ChangeStaged:
         """
         Parses given d-bus message containing a ChangeStaged event.
         :param message: The message.
@@ -95,4 +95,4 @@ class DbusChangeStaged(BaseObject, ServiceInterface):
         :rtype event: pythoneda.shared.artifact_changes.events.ChangeStaged
         """
         change, event_id, prev_event_ids = message.body
-        return ChangeStaged(json.loads(change), None, event_id, json.loads(prev_event_ids))
+        return ChangeStaged(Change.from_json(change), None, event_id, json.loads(prev_event_ids))
