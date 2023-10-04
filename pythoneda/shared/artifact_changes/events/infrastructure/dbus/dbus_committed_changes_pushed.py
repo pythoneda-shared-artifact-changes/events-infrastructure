@@ -74,7 +74,7 @@ class DbusCommittedChangesPushed(BaseObject, ServiceInterface):
         :return: The event information.
         :rtype: List[str]
         """
-        return [ str(event.change), event.commit, event.id, json.dumps(event.previous_event_ids) ]
+        return [ event.repository_url, event.branch, event.id, json.dumps(event.previous_event_ids) ]
 
     @classmethod
     def sign(cls, event: CommittedChangesPushed) -> str:
@@ -96,5 +96,5 @@ class DbusCommittedChangesPushed(BaseObject, ServiceInterface):
         :return: The CommittedChangesPushed event.
         :rtype: pythoneda.shared.artifact_changes.events.CommittedChangesPushed
         """
-        change_json, commit, event_id, prev_event_ids = message.body
-        return CommittedChangesPushed(Change.from_json(change_json), commit, None, event_id, json.loads(prev_event_ids))
+        repository_url, branch, event_id, prev_event_ids = message.body
+        return CommittedChangesPushed(repository_url, branch, None, event_id, json.loads(prev_event_ids))
