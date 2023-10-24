@@ -18,16 +18,28 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
-__path__ = __import__('pkgutil').extend_path(__path__, __name__)
+__path__ = __import__("pkgutil").extend_path(__path__, __name__)
 
 DBUS_PATH = "/pythoneda/shared/artifact_changes"
 
+from .dbus_artifact_changes_committed import DbusArtifactChangesCommitted
+from .dbus_artifact_commit_pushed import DbusArtifactCommitPushed
+from .dbus_artifact_commit_tagged import DbusArtifactCommitTagged
+from .dbus_artifact_tag_pushed import DbusArtifactTagPushed
 from .dbus_change_staged import DbusChangeStaged
+from .dbus_change_staging_code_execution_packaged import (
+    DbusChangeStagingCodeExecutionPackaged,
+)
+from .dbus_change_staging_code_execution_requested import (
+    DbusChangeStagingCodeExecutionRequested,
+)
 from .dbus_change_staging_code_packaged import DbusChangeStagingCodePackaged
 from .dbus_change_staging_code_described import DbusChangeStagingCodeDescribed
 from .dbus_change_staging_code_requested import DbusChangeStagingCodeRequested
-from .dbus_staged_changes_committed import DbusStagedChangesCommitted
-from .dbus_staged_changes_commit_code_requested import DbusStagedChangesCommitCodeRequested
-from .dbus_change_staging_code_execution_requested import DbusChangeStagingCodeExecutionRequested
-from .dbus_change_staging_code_execution_packaged import DbusChangeStagingCodeExecutionPackaged
 from .dbus_committed_changes_pushed import DbusCommittedChangesPushed
+from .dbus_committed_changes_tagged import DbusCommittedChangesTagged
+from .dbus_staged_changes_commit_code_requested import (
+    DbusStagedChangesCommitCodeRequested,
+)
+from .dbus_staged_changes_committed import DbusStagedChangesCommitted
+from .dbus_tag_pushed import DbusTagPushed
