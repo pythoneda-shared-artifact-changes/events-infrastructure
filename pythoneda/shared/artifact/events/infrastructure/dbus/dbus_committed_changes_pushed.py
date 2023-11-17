@@ -1,9 +1,9 @@
 """
-pythoneda/shared/artifact_changes/events/infrastructure/dbus/dbus_committed_changes_pushed.py
+pythoneda/shared/artifact/events/infrastructure/dbus/dbus_committed_changes_pushed.py
 
 This file defines the DbusCommittedChangesPushed class.
 
-Copyright (C) 2023-today rydnr's pythoneda-shared-artifact-changes/event-infrastructure
+Copyright (C) 2023-today rydnr's pythoneda-shared-artifact/event-infrastructure
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -22,9 +22,10 @@ from dbus_next import Message
 from dbus_next.service import ServiceInterface, signal
 import json
 from pythoneda import BaseObject
-from pythoneda.shared.artifact_changes.events import CommittedChangesPushed
-from pythoneda.shared.artifact_changes.events.infrastructure.dbus import DBUS_PATH
+from pythoneda.shared.artifact.events import CommittedChangesPushed
+from pythoneda.shared.artifact.events.infrastructure.dbus import DBUS_PATH
 from typing import List
+
 
 class DbusCommittedChangesPushed(BaseObject, ServiceInterface):
     """
@@ -43,9 +44,7 @@ class DbusCommittedChangesPushed(BaseObject, ServiceInterface):
         """
         Creates a new DbusCommittedChangesPushed.
         """
-        super().__init__(
-            "Pythoneda_Shared_artifact_changes_Events_CommittedChangesPushed"
-        )
+        super().__init__("Pythoneda_Shared_Artifact_Events_CommittedChangesPushed")
 
     @signal()
     def CommittedChangesPushed(self, change: "s", commit: "s"):
@@ -72,23 +71,28 @@ class DbusCommittedChangesPushed(BaseObject, ServiceInterface):
         """
         Transforms given event to signal parameters.
         :param event: The event to transform.
-        :type event: pythoneda.shared.artifact_changes.events.CommittedChangesPushed
+        :type event: pythoneda.shared.artifact.events.CommittedChangesPushed
         :return: The event information.
         :rtype: List[str]
         """
-        return [ event.change.to_json(), event.commit, event.id, json.dumps(event.previous_event_ids) ]
+        return [
+            event.change.to_json(),
+            event.commit,
+            event.id,
+            json.dumps(event.previous_event_ids),
+        ]
 
     @classmethod
     def sign(cls, event: CommittedChangesPushed) -> str:
         """
         Retrieves the signature for the parameters of given event.
         :param event: The domain event.
-        :type event: pythoneda.shared.artifact_changes.events.CommittedChangesPushed
+        :type event: pythoneda.shared.artifact.events.CommittedChangesPushed
         :return: The signature.
         :rtype: str
         """
-        print(f'received event: {event}')
-        return 'ssss'
+        print(f"received event: {event}")
+        return "ssss"
 
     @classmethod
     def parse(cls, message: Message) -> CommittedChangesPushed:
@@ -97,7 +101,13 @@ class DbusCommittedChangesPushed(BaseObject, ServiceInterface):
         :param message: The message.
         :type message: dbus_next.Message
         :return: The CommittedChangesPushed event.
-        :rtype: pythoneda.shared.artifact_changes.events.CommittedChangesPushed
+        :rtype: pythoneda.shared.artifact.events.CommittedChangesPushed
         """
         change_json, commit, event_id, prev_event_ids = message.body
-        return CommittedChangesPushed(Change.from_json(change_json), commit, None, event_id, json.loads(prev_event_ids))
+        return CommittedChangesPushed(
+            Change.from_json(change_json),
+            commit,
+            None,
+            event_id,
+            json.loads(prev_event_ids),
+        )

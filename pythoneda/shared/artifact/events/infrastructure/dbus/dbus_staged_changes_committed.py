@@ -1,9 +1,9 @@
 """
-pythoneda/shared/artifact_changes/events/infrastructure/dbus/dbus_staged_changes_committed.py
+pythoneda/shared/artifact/events/infrastructure/dbus/dbus_staged_changes_committed.py
 
 This file defines the DbusStagedChangesCommitted class.
 
-Copyright (C) 2023-today rydnr's pythoneda-shared-artifact-changes/event-infrastructure
+Copyright (C) 2023-today rydnr's pythoneda-shared-artifact/event-infrastructure
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -22,9 +22,10 @@ from dbus_next import Message
 from dbus_next.service import ServiceInterface, signal
 import json
 from pythoneda import BaseObject
-from pythoneda.shared.artifact_changes.events import StagedChangesCommitted
-from pythoneda.shared.artifact_changes.events.infrastructure.dbus import DBUS_PATH
+from pythoneda.shared.artifact.events import StagedChangesCommitted
+from pythoneda.shared.artifact.events.infrastructure.dbus import DBUS_PATH
 from typing import List
+
 
 class DbusStagedChangesCommitted(BaseObject, ServiceInterface):
     """
@@ -43,7 +44,7 @@ class DbusStagedChangesCommitted(BaseObject, ServiceInterface):
         """
         Creates a new DbusStagedChangesCommitted.
         """
-        super().__init__("Pythoneda_Shared_artifact_changes_Events_StagedChangesCommitted")
+        super().__init__("Pythoneda_Shared_Artifact_Events_StagedChangesCommitted")
 
     @signal()
     def StagedChangesCommitted(self, change: "s"):
@@ -70,7 +71,7 @@ class DbusStagedChangesCommitted(BaseObject, ServiceInterface):
         """
         Transforms given event to signal parameters.
         :param event: The event to transform.
-        :type event: pythoneda.shared.artifact_changes.events.StagedChangesCommitted
+        :type event: pythoneda.shared.artifact.events.StagedChangesCommitted
         :return: The event information.
         :rtype: List[str]
         """
@@ -84,13 +85,11 @@ class DbusStagedChangesCommitted(BaseObject, ServiceInterface):
         ]
 
     @classmethod
-    def signature_for_StagedChangesCommitted(
-        cls, event: StagedChangesCommitted
-    ) -> str:
+    def signature_for_StagedChangesCommitted(cls, event: StagedChangesCommitted) -> str:
         """
         Retrieves the signature for the parameters of given event.
         :param event: The domain event.
-        :type event: pythoneda.shared.artifact_changes.events.StagedChangesCommitted
+        :type event: pythoneda.shared.artifact.events.StagedChangesCommitted
         :return: The signature.
         :rtype: str
         """
@@ -105,7 +104,7 @@ class DbusStagedChangesCommitted(BaseObject, ServiceInterface):
         :param message: The message.
         :type message: dbus_next.Message
         :return: The StagedChangesCommitted event.
-        :rtype: pythonedaartifacteventchanges.change_staging_requested.StagedChangesCommitted
+        :rtype: pythoneda.shared.artifact.events.StagedChangesCommitted
         """
         (
             msg,

@@ -1,9 +1,9 @@
 """
-pythoneda/shared/artifact_changes/events/infrastructure/dbus/dbus_change_staged.py
+pythoneda/shared/artifact/events/infrastructure/dbus/dbus_change_staged.py
 
 This file defines the DbusChangeStaged class.
 
-Copyright (C) 2023-today rydnr's pythoneda-shared-artifact-changes/events-infrastructure
+Copyright (C) 2023-today rydnr's pythoneda-shared-artifact/events-infrastructure
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -22,9 +22,10 @@ from dbus_next import Message
 from dbus_next.service import ServiceInterface, signal
 import json
 from pythoneda import BaseObject
-from pythoneda.shared.artifact_changes.events import ChangeStaged
-from pythoneda.shared.artifact_changes.events.infrastructure.dbus import DBUS_PATH
+from pythoneda.shared.artifact.events import ChangeStaged
+from pythoneda.shared.artifact.events.infrastructure.dbus import DBUS_PATH
 from typing import List
+
 
 class DbusChangeStaged(BaseObject, ServiceInterface):
     """
@@ -43,7 +44,7 @@ class DbusChangeStaged(BaseObject, ServiceInterface):
         """
         Creates a new DbusChangeStaged.
         """
-        super().__init__("Pythoneda_Shared_artifact_changes_Events_ChangeStaged")
+        super().__init__("Pythoneda_Shared_Artifact_Events_ChangeStaged")
 
     @signal()
     def ChangeStaged(self, change: "s"):
@@ -68,22 +69,22 @@ class DbusChangeStaged(BaseObject, ServiceInterface):
         """
         Transforms given event to signal parameters.
         :param event: The event to transform.
-        :type event: pythoneda.shared.artifact_changes.events.ChangeStaged
+        :type event: pythoneda.shared.artifact.events.ChangeStaged
         :return: The event information.
         :rtype: List[str]
         """
-        return [ event.change.to_json(), event.id, json.dumps(event.previous_event_ids) ]
+        return [event.change.to_json(), event.id, json.dumps(event.previous_event_ids)]
 
     @classmethod
     def sign(cls, event: ChangeStaged) -> str:
         """
         Retrieves the signature for the parameters of given event.
         :param event: The domain event.
-        :type event: pythoneda.shared.artifact_changes.events.ChangeStaged
+        :type event: pythoneda.shared.artifact.events.ChangeStaged
         :return: The signature.
         :rtype: str
         """
-        return 'sss'
+        return "sss"
 
     @classmethod
     def parse(cls, message: Message) -> ChangeStaged:
@@ -92,7 +93,9 @@ class DbusChangeStaged(BaseObject, ServiceInterface):
         :param message: The message.
         :type message: dbus_next.Message
         :return: The ChangeStaged event.
-        :rtype event: pythoneda.shared.artifact_changes.events.ChangeStaged
+        :rtype event: pythoneda.shared.artifact.events.ChangeStaged
         """
         change, event_id, prev_event_ids = message.body
-        return ChangeStaged(Change.from_json(change), None, event_id, json.loads(prev_event_ids))
+        return ChangeStaged(
+            Change.from_json(change), None, event_id, json.loads(prev_event_ids)
+        )

@@ -1,9 +1,9 @@
 """
-pythoneda/shared/artifact_changes/events/infrastructure/dbus/dbus_committed_changes_tagged.py
+pythoneda/shared/artifact/events/infrastructure/dbus/dbus_committed_changes_tagged.py
 
 This file defines the DbusCommittedChangesTagged class.
 
-Copyright (C) 2023-today rydnr's pythoneda-shared-artifact-changes/event-infrastructure
+Copyright (C) 2023-today rydnr's pythoneda-shared-artifact/event-infrastructure
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -22,8 +22,8 @@ from dbus_next import Message
 from dbus_next.service import ServiceInterface, signal
 import json
 from pythoneda import BaseObject
-from pythoneda.shared.artifact_changes.events import CommittedChangesTagged
-from pythoneda.shared.artifact_changes.events.infrastructure.dbus import DBUS_PATH
+from pythoneda.shared.artifact.events import CommittedChangesTagged
+from pythoneda.shared.artifact.events.infrastructure.dbus import DBUS_PATH
 from typing import List
 
 
@@ -44,9 +44,7 @@ class DbusCommittedChangesTagged(BaseObject, ServiceInterface):
         """
         Creates a new DbusCommittedChangesTagged.
         """
-        super().__init__(
-            "Pythoneda_Shared_artifact_changes_Events_CommittedChangesTagged"
-        )
+        super().__init__("Pythoneda_Shared_Artifact_Events_CommittedChangesTagged")
 
     @signal()
     def CommittedChangesTagged(self, commit: "s"):
@@ -71,7 +69,7 @@ class DbusCommittedChangesTagged(BaseObject, ServiceInterface):
         """
         Transforms given event to signal parameters.
         :param event: The event to transform.
-        :type event: pythoneda.shared.artifact_changes.events.CommittedChangesTagged
+        :type event: pythoneda.shared.artifact.events.CommittedChangesTagged
         :return: The event information.
         :rtype: List[str]
         """
@@ -90,7 +88,7 @@ class DbusCommittedChangesTagged(BaseObject, ServiceInterface):
         """
         Retrieves the signature for the parameters of given event.
         :param event: The domain event.
-        :type event: pythoneda.shared.artifact_changes.events.CommittedChangesTagged
+        :type event: pythoneda.shared.artifact.events.CommittedChangesTagged
         :return: The signature.
         :rtype: str
         """
@@ -103,9 +101,24 @@ class DbusCommittedChangesTagged(BaseObject, ServiceInterface):
         :param message: The message.
         :type message: dbus_next.Message
         :return: The CommittedChangesPushed event.
-        :rtype: pythoneda.shared.artifact_changes.events.CommittedChangesTagged
+        :rtype: pythoneda.shared.artifact.events.CommittedChangesTagged
         """
-        tag, commit, repository_url, branch, folder, event_id, prev_event_ids = message.body
+        (
+            tag,
+            commit,
+            repository_url,
+            branch,
+            folder,
+            event_id,
+            prev_event_ids,
+        ) = message.body
         return CommittedChangesTagged(
-            tag, commit, repository_url, branch, folder, None, event_id, json.loads(prev_event_ids)
+            tag,
+            commit,
+            repository_url,
+            branch,
+            folder,
+            None,
+            event_id,
+            json.loads(prev_event_ids),
         )
