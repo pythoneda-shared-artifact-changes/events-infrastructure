@@ -22,7 +22,7 @@ from dbus_next import Message
 from dbus_next.service import ServiceInterface, signal
 import json
 from pythoneda import BaseObject
-from pythoneda.shared.artifact.events import StagedChangesCommitted
+from pythoneda.shared.artifact.events import Change, StagedChangesCommitted
 from pythoneda.shared.artifact.events.infrastructure.dbus import DBUS_PATH
 from typing import List
 
@@ -65,9 +65,7 @@ class DbusStagedChangesCommitted(BaseObject, ServiceInterface):
         return DBUS_PATH
 
     @classmethod
-    def transform_StagedChangesCommitted(
-        self, event: StagedChangesCommitted
-    ) -> List[str]:
+    def transform(self, event: StagedChangesCommitted) -> List[str]:
         """
         Transforms given event to signal parameters.
         :param event: The event to transform.
@@ -77,15 +75,14 @@ class DbusStagedChangesCommitted(BaseObject, ServiceInterface):
         """
         return [
             event.message,
-            event.repository_url,
-            event.branch,
-            event.repository_folder,
+            event.change.to_json(),
+            event.commit,
             event.id,
             json.dumps(event.previous_event_ids),
         ]
 
     @classmethod
-    def signature_for_StagedChangesCommitted(cls, event: StagedChangesCommitted) -> str:
+    def sign(cls, event: StagedChangesCommitted) -> str:
         """
         Retrieves the signature for the parameters of given event.
         :param event: The domain event.
@@ -93,12 +90,10 @@ class DbusStagedChangesCommitted(BaseObject, ServiceInterface):
         :return: The signature.
         :rtype: str
         """
-        return "ssssss"
+        return "sssss"
 
     @classmethod
-    def parse_pythonedaartifactchanges_StagedChangesCommitted(
-        cls, message: Message
-    ) -> StagedChangesCommitted:
+    def parse(cls, message: Message) -> StagedChangesCommitted:
         """
         Parses given d-bus message containing a StagedChangesCommitted event.
         :param message: The message.
@@ -106,19 +101,11 @@ class DbusStagedChangesCommitted(BaseObject, ServiceInterface):
         :return: The StagedChangesCommitted event.
         :rtype: pythoneda.shared.artifact.events.StagedChangesCommitted
         """
-        (
-            msg,
-            repository_url,
-            branch,
-            repository_folder,
-            event_id,
-            prev_event_ids,
-        ) = message.body
+        msg, change_json, commit, event_id, prev_event_ids = message.body
         return StagedChangesCommitted(
             msg,
-            repository_url,
-            branch,
-            repository_folder,
+            Change.from_json(change_json),
+            commit,
             None,
             event_id,
             json.loads(prev_event_ids),
