@@ -22,7 +22,7 @@ from dbus_next import Message
 from dbus_next.service import ServiceInterface, signal
 import json
 from pythoneda import BaseObject
-from pythoneda.shared.artifact.events import CommittedChangesPushed
+from pythoneda.shared.artifact.events import Change, CommittedChangesPushed
 from pythoneda.shared.artifact.events.infrastructure.dbus import DBUS_PATH
 from typing import List
 
@@ -67,7 +67,7 @@ class DbusCommittedChangesPushed(BaseObject, ServiceInterface):
         return DBUS_PATH
 
     @classmethod
-    def transform(self, event: CommittedChangesPushed) -> List[str]:
+    def transform(cls, event: CommittedChangesPushed) -> List[str]:
         """
         Transforms given event to signal parameters.
         :param event: The event to transform.

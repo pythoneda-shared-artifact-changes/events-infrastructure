@@ -20,7 +20,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 import argparse
 from pythoneda import Event, EventEmitter, listen, Ports
-from pythoneda.application import PythonEDA
 from pythoneda.infrastructure.cli import ForwardEventCli
 from pythoneda.shared.artifact.events import Change, StagedChangesCommitted
 from pythoneda.shared.git import GitCommit, GitDiff, GitRepo
@@ -54,16 +53,7 @@ class ForwardStagedChangesCommittedCli(ForwardEventCli):
         :type parser: argparse.ArgumentParser
         """
         parser.add_argument(
-            "-e",
-            "--event",
-            required=False,
-            choices=[
-                "StagedChangesCommitted",
-            ],
-            help="The type of event to send.",
-        )
-        parser.add_argument(
-            "-r", "--repository-folder", required=False, help="The repository folder"
+            "-r", "--repository-folder", required=True, help="The repository folder"
         )
 
     def build_event(self, app, args: argparse.Namespace) -> Event:
@@ -76,7 +66,6 @@ class ForwardStagedChangesCommittedCli(ForwardEventCli):
         :return: The event.
         :rtype: pythoneda.Event
         """
-        result = None
         if not args.repository_folder:
             print(f"-r|--repository-folder is mandatory")
             sys.exit(1)
@@ -88,7 +77,6 @@ class ForwardStagedChangesCommittedCli(ForwardEventCli):
                 git_repo.rev,
                 args.repository_folder,
             )
-            hash, diff, message = GitCommit(args.repository_folder).latest_commit()
-            result = StagedChangesCommitted(message, change, hash)
-        print(f"Returning {result}")
+            hash_value, diff, message = GitCommit(args.repository_folder).latest_commit()
+            result = StagedChangesCommitted(message, change, hash_value)
         return result

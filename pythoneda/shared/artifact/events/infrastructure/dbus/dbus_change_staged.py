@@ -22,7 +22,7 @@ from dbus_next import Message
 from dbus_next.service import ServiceInterface, signal
 import json
 from pythoneda import BaseObject
-from pythoneda.shared.artifact.events import ChangeStaged
+from pythoneda.shared.artifact.events import Change, ChangeStaged
 from pythoneda.shared.artifact.events.infrastructure.dbus import DBUS_PATH
 from typing import List
 

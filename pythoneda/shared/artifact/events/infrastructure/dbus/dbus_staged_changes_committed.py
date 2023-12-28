@@ -65,7 +65,7 @@ class DbusStagedChangesCommitted(BaseObject, ServiceInterface):
         return DBUS_PATH
 
     @classmethod
-    def transform(self, event: StagedChangesCommitted) -> List[str]:
+    def transform(cls, event: StagedChangesCommitted) -> List[str]:
         """
         Transforms given event to signal parameters.
         :param event: The event to transform.

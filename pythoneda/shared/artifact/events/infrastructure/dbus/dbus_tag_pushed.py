@@ -71,7 +71,7 @@ class DbusTagPushed(BaseObject, ServiceInterface):
         return DBUS_PATH
 
     @classmethod
-    def transform(self, event: TagPushed) -> List[str]:
+    def transform(cls, event: TagPushed) -> List[str]:
         """
         Transforms given event to signal parameters.
         :param event: The event to transform.
