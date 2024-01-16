@@ -1,3 +1,4 @@
+# vim: set fileencoding=utf-8
 """
 pythoneda/shared/artifact/events/infrastructure/cli/forward_staged_changes_committed_cli.py
 
@@ -19,10 +20,10 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 import argparse
-from pythoneda import Event, EventEmitter, listen, Ports
-from pythoneda.infrastructure.cli import ForwardEventCli
+from pythoneda.shared import Event, EventEmitter, listen, Ports
 from pythoneda.shared.artifact.events import Change, StagedChangesCommitted
 from pythoneda.shared.git import GitCommit, GitDiff, GitRepo
+from pythoneda.shared.infrastructure.cli import ForwardEventCli
 import sys
 
 
@@ -37,7 +38,7 @@ class ForwardStagedChangesCommittedCli(ForwardEventCli):
         - Build events from information from the CLI, and forwards them.
 
     Collaborators:
-        - pythoneda.application.PythonEDA: To initialize this class.
+        - pythoneda.shared.application.PythonEDA: To initialize this class.
     """
 
     def __init__(self):
@@ -60,11 +61,11 @@ class ForwardStagedChangesCommittedCli(ForwardEventCli):
         """
         Builds a StagedChangesCommitted event from the information specified from the command line.
         :param app: The PythonEDA instance.
-        :type app: pythoneda.application.PythonEDA
+        :type app: pythoneda.shared.application.PythonEDA
         :param args: The CLI args.
         :type args: argparse.Namespace
         :return: The event.
-        :rtype: pythoneda.Event
+        :rtype: pythoneda.shared.Event
         """
         if not args.repository_folder:
             print(f"-r|--repository-folder is mandatory")
@@ -77,6 +78,8 @@ class ForwardStagedChangesCommittedCli(ForwardEventCli):
                 git_repo.rev,
                 args.repository_folder,
             )
-            hash_value, diff, message = GitCommit(args.repository_folder).latest_commit()
+            hash_value, diff, message = GitCommit(
+                args.repository_folder
+            ).latest_commit()
             result = StagedChangesCommitted(message, change, hash_value)
         return result
