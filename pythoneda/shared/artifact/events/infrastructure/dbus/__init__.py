@@ -28,3 +28,11 @@ from .dbus_committed_changes_pushed import DbusCommittedChangesPushed
 from .dbus_committed_changes_tagged import DbusCommittedChangesTagged
 from .dbus_staged_changes_committed import DbusStagedChangesCommitted
 from .dbus_tag_pushed import DbusTagPushed
+# vim: syntax=python ts=4 sw=4 sts=4 tw=79 sr et
+# Local Variables:
+# mode: python
+# python-indent-offset: 4
+# tab-width: 4
+# indent-tabs-mode: nil
+# fill-column: 79
+# End:
