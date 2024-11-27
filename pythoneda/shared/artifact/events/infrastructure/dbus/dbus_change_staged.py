@@ -94,12 +94,14 @@ class DbusChangeStaged(BaseObject, ServiceInterface):
         :param message: The message.
         :type message: dbus_next.Message
         :return: The ChangeStaged event.
-        :rtype event: pythoneda.shared.artifact.events.ChangeStaged
+        :rtype: pythoneda.shared.artifact.events.ChangeStaged
         """
         change, event_id, prev_event_ids = message.body
         return ChangeStaged(
             Change.from_json(change), None, event_id, json.loads(prev_event_ids)
         )
+
+
 # vim: syntax=python ts=4 sw=4 sts=4 tw=79 sr et
 # Local Variables:
 # mode: python
