@@ -64,7 +64,7 @@ class DbusDockerImageRequested(BaseObject, ServiceInterface):
         :return: Such value.
         :rtype: str
         """
-        return DBUS_PATH + "/*/*"
+        return DBUS_PATH + "/*"
 
     def build_path(self, event: Event) -> str:
         """
@@ -74,7 +74,7 @@ class DbusDockerImageRequested(BaseObject, ServiceInterface):
         :return: Such value.
         :rtype: str
         """
-        return DBUS_PATH + "/" + event.image_name + "/" + event.image_version
+        return DBUS_PATH + "/" + event.image_name
 
     @property
     def bus_type(self) -> str:
@@ -94,7 +94,12 @@ class DbusDockerImageRequested(BaseObject, ServiceInterface):
         :return: The event information.
         :rtype: List[str]
         """
-        return [event.version, event.id, json.dumps(event.previous_event_ids)]
+        return [
+            event.image_name,
+            event.image_version,
+            event.id,
+            json.dumps(event.previous_event_ids),
+        ]
 
     @classmethod
     def sign(cls, event: DockerImageRequested) -> str:
@@ -105,7 +110,7 @@ class DbusDockerImageRequested(BaseObject, ServiceInterface):
         :return: The signature.
         :rtype: str
         """
-        return "sss"
+        return "ssss"
 
     @classmethod
     def parse(cls, message: Message) -> DockerImageRequested:
@@ -116,8 +121,10 @@ class DbusDockerImageRequested(BaseObject, ServiceInterface):
         :return: The DockerImageRequested event.
         :rtype: org.acmsl.artifact.events.licdata.DockerImageRequested
         """
-        version, event_id, prev_event_ids = message.body
-        return DockerImageRequested(version, None, event_id, json.loads(prev_event_ids))
+        image_name, image_version, event_id, prev_event_ids = message.body
+        return DockerImageRequested(
+            image_name, image_version, None, event_id, json.loads(prev_event_ids)
+        )
 
 
 # vim: syntax=python ts=4 sw=4 sts=4 tw=79 sr et
