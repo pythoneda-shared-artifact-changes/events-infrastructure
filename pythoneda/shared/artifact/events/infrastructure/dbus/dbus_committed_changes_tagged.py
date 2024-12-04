@@ -45,7 +45,7 @@ class DbusCommittedChangesTagged(BaseObject, ServiceInterface):
         """
         Creates a new DbusCommittedChangesTagged.
         """
-        super().__init__("Pythoneda_Shared_Artifact_Events_CommittedChangesTagged")
+        super().__init__("Pythoneda_Artifact_CommittedChangesTagged")
 
     @signal()
     def CommittedChangesTagged(self, commit: "s"):
@@ -56,8 +56,8 @@ class DbusCommittedChangesTagged(BaseObject, ServiceInterface):
         """
         pass
 
-    @classmethod
-    def path(cls) -> str:
+    @property
+    def path(self) -> str:
         """
         Retrieves the d-bus path.
         :return: Such value.
@@ -123,6 +123,8 @@ class DbusCommittedChangesTagged(BaseObject, ServiceInterface):
             event_id,
             json.loads(prev_event_ids),
         )
+
+
 # vim: syntax=python ts=4 sw=4 sts=4 tw=79 sr et
 # Local Variables:
 # mode: python

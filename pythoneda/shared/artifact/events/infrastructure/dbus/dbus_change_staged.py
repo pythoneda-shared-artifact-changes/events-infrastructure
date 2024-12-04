@@ -45,7 +45,7 @@ class DbusChangeStaged(BaseObject, ServiceInterface):
         """
         Creates a new DbusChangeStaged.
         """
-        super().__init__("Pythoneda_Shared_Artifact_Events_ChangeStaged")
+        super().__init__("Pythoneda_Artifact_ChangeStaged")
 
     @signal()
     def ChangeStaged(self, change: "s"):
@@ -56,8 +56,8 @@ class DbusChangeStaged(BaseObject, ServiceInterface):
         """
         pass
 
-    @classmethod
-    def path(cls) -> str:
+    @property
+    def path(self) -> str:
         """
         Retrieves the d-bus path.
         :return: Such value.

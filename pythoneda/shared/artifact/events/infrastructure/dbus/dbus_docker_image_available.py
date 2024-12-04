@@ -1,10 +1,10 @@
 # vim: set fileencoding=utf-8
 """
-pythoneda/shared/artifact/events/infrastructure/dbus/dbus_staged_changes_committed.py
+pythoneda/shared/artifact/events/infrastructure/dbus/dbus_docker_image_available.py
 
-This file defines the DbusStagedChangesCommitted class.
+This file defines the DbusDockerImageAvailable class.
 
-Copyright (C) 2023-today rydnr's pythoneda-shared-artifact/event-infrastructure
+Copyright (C) 2024-today rydnr's pythoneda-shared-artifact/events-infrastructure
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -23,19 +23,18 @@ from dbus_next import Message
 from dbus_next.service import ServiceInterface, signal
 import json
 from pythoneda.shared import BaseObject
-from pythoneda.shared.artifact.events import Change, StagedChangesCommitted
 from pythoneda.shared.artifact.events.infrastructure.dbus import DBUS_PATH
 from typing import List
 
 
-class DbusStagedChangesCommitted(BaseObject, ServiceInterface):
+class DbusDockerImageAvailable(BaseObject, ServiceInterface):
     """
-    D-Bus interface for StagedChangesCommitted
+    D-Bus interface for DockerImageAvailable
 
-    Class name: DbusStagedChangesCommitted
+    Class name: DbusDockerImageAvailable
 
     Responsibilities:
-        - Define the d-bus interface for the StagedChangesCommitted event.
+        - Define the d-bus interface for the DockerImageAvailable event.
 
     Collaborators:
         - None
@@ -43,16 +42,20 @@ class DbusStagedChangesCommitted(BaseObject, ServiceInterface):
 
     def __init__(self):
         """
-        Creates a new DbusStagedChangesCommitted.
+        Creates a new DbusDockerImageAvailable.
         """
-        super().__init__("Pythoneda_Artifact_StagedChangesCommitted")
+        super().__init__("Pythoneda_Artifact_DockerImageAvailable")
 
     @signal()
-    def StagedChangesCommitted(self, change: "s"):
+    def DockerImageAvailable(self, name: "s", version: "s", url: "s"):
         """
-        Defines the StagedChangesCommitted d-bus signal.
-        :param change: The change.
-        :type change: str
+        Defines the DockerImageAvailable d-bus signal.
+        :param name: The image name.
+        :type name: str
+        :param version: The version.
+        :type version: str
+        :param url: The url the image is available.
+        :type url: str
         """
         pass
 
@@ -66,50 +69,45 @@ class DbusStagedChangesCommitted(BaseObject, ServiceInterface):
         return DBUS_PATH
 
     @classmethod
-    def transform(cls, event: StagedChangesCommitted) -> List[str]:
+    def transform(cls, event: DockerImageAvailable) -> List[str]:
         """
         Transforms given event to signal parameters.
         :param event: The event to transform.
-        :type event: pythoneda.shared.artifact.events.StagedChangesCommitted
+        :type event: org.acmsl.artifact.events.licdata.DockerImageAvailable
         :return: The event information.
         :rtype: List[str]
         """
         return [
-            event.message,
-            event.change.to_json(),
-            event.commit,
+            event.name,
+            event.version,
+            event.url,
             event.id,
             json.dumps(event.previous_event_ids),
         ]
 
     @classmethod
-    def sign(cls, event: StagedChangesCommitted) -> str:
+    def sign(cls, event: DockerImageAvailable) -> str:
         """
         Retrieves the signature for the parameters of given event.
         :param event: The domain event.
-        :type event: pythoneda.shared.artifact.events.StagedChangesCommitted
+        :type event: org.acmsl.artifact.events.licdata.DockerImageAvailable
         :return: The signature.
         :rtype: str
         """
         return "sssss"
 
     @classmethod
-    def parse(cls, message: Message) -> StagedChangesCommitted:
+    def parse(cls, message: Message) -> DockerImageAvailable:
         """
-        Parses given d-bus message containing a StagedChangesCommitted event.
+        Parses given d-bus message containing a DockerImageAvailable event.
         :param message: The message.
         :type message: dbus_next.Message
-        :return: The StagedChangesCommitted event.
-        :rtype: pythoneda.shared.artifact.events.StagedChangesCommitted
+        :return: The DockerImageAvailable event.
+        :rtype: org.acmsl.artifact.events.licdata.DockerImageAvailable
         """
-        msg, change_json, commit, event_id, prev_event_ids = message.body
-        return StagedChangesCommitted(
-            msg,
-            Change.from_json(change_json),
-            commit,
-            None,
-            event_id,
-            json.loads(prev_event_ids),
+        name, version, url, event_id, prev_event_ids = message.body
+        return DockerImageAvailable(
+            name, version, url, None, event_id, json.loads(prev_event_ids)
         )
 
 

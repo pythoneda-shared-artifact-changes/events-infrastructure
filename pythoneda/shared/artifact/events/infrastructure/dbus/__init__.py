@@ -21,13 +21,16 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 __path__ = __import__("pkgutil").extend_path(__path__, __name__)
 
-DBUS_PATH = "/pythoneda/shared/artifact"
+DBUS_PATH = "/pythoneda/artifact"
 
 from .dbus_change_staged import DbusChangeStaged
 from .dbus_committed_changes_pushed import DbusCommittedChangesPushed
 from .dbus_committed_changes_tagged import DbusCommittedChangesTagged
+from .dbus_docker_image_available import DbusDockerImageAvailable
+from .dbus_docker_image_requested import DbusDockerImageRequested
 from .dbus_staged_changes_committed import DbusStagedChangesCommitted
 from .dbus_tag_pushed import DbusTagPushed
+
 # vim: syntax=python ts=4 sw=4 sts=4 tw=79 sr et
 # Local Variables:
 # mode: python
