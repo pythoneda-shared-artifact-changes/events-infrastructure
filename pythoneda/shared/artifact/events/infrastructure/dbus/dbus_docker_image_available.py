@@ -22,7 +22,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 from dbus_next import Message
 from dbus_next.service import ServiceInterface, signal
 import json
-from pythoneda.shared import BaseObject
+from pythoneda.shared import BaseObject, Event
+from pythoneda.shared.artifact.events import DockerImageAvailable
 from pythoneda.shared.artifact.events.infrastructure.dbus import DBUS_PATH
 from typing import List
 
@@ -47,15 +48,15 @@ class DbusDockerImageAvailable(BaseObject, ServiceInterface):
         super().__init__("Pythoneda_Artifact_DockerImageAvailable")
 
     @signal()
-    def DockerImageAvailable(self, name: "s", version: "s", url: "s"):
+    def DockerImageAvailable(self, imageName: "s", imageVersion: "s", imageUrl: "s"):
         """
         Defines the DockerImageAvailable d-bus signal.
-        :param name: The image name.
-        :type name: str
-        :param version: The version.
-        :type version: str
-        :param url: The url the image is available.
-        :type url: str
+        :param imageName: The image name.
+        :type imageName: str
+        :param imageVersion: The version.
+        :type imageVersion: str
+        :param imageUrl: The url the image is available.
+        :type imageUrl: str
         """
         pass
 
@@ -68,19 +69,29 @@ class DbusDockerImageAvailable(BaseObject, ServiceInterface):
         """
         return DBUS_PATH
 
+    def build_path(self, event: Event) -> str:
+        """
+        Retrieves the d-bus path for given event.
+        :param event: The event.
+        :type event: pythoneda.shared.Event
+        :return: Such value.
+        :rtype: str
+        """
+        return DBUS_PATH + "/" + event.image_name
+
     @classmethod
     def transform(cls, event: DockerImageAvailable) -> List[str]:
         """
         Transforms given event to signal parameters.
         :param event: The event to transform.
-        :type event: org.acmsl.artifact.events.licdata.DockerImageAvailable
+        :type event: pythoneda.shared.artifact.events.DockerImagAvailable
         :return: The event information.
         :rtype: List[str]
         """
         return [
-            event.name,
-            event.version,
-            event.url,
+            event.image_name,
+            event.image_version,
+            event.image_url,
             event.id,
             json.dumps(event.previous_event_ids),
         ]
@@ -90,7 +101,7 @@ class DbusDockerImageAvailable(BaseObject, ServiceInterface):
         """
         Retrieves the signature for the parameters of given event.
         :param event: The domain event.
-        :type event: org.acmsl.artifact.events.licdata.DockerImageAvailable
+        :type event: pythoneda.shared.artifact.events.DockerImagAvailable
         :return: The signature.
         :rtype: str
         """
@@ -103,11 +114,16 @@ class DbusDockerImageAvailable(BaseObject, ServiceInterface):
         :param message: The message.
         :type message: dbus_next.Message
         :return: The DockerImageAvailable event.
-        :rtype: org.acmsl.artifact.events.licdata.DockerImageAvailable
+        :rtype: pythoneda.shared.artifact.events.DockerImagAvailable
         """
-        name, version, url, event_id, prev_event_ids = message.body
+        image_name, image_version, image_url, event_id, prev_event_ids = message.body
         return DockerImageAvailable(
-            name, version, url, None, event_id, json.loads(prev_event_ids)
+            image_name,
+            image_version,
+            image_url,
+            None,
+            event_id,
+            json.loads(prev_event_ids),
         )
 
 

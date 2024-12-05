@@ -23,6 +23,7 @@ from dbus_next import BusType, Message
 from dbus_next.service import ServiceInterface, signal
 import json
 from pythoneda.shared import BaseObject, Event
+from pythoneda.shared.artifact.events import DockerImageRequested
 from pythoneda.shared.artifact.events.infrastructure.dbus import DBUS_PATH
 from typing import List
 
@@ -64,7 +65,7 @@ class DbusDockerImageRequested(BaseObject, ServiceInterface):
         :return: Such value.
         :rtype: str
         """
-        return DBUS_PATH + "/*"
+        return DBUS_PATH
 
     def build_path(self, event: Event) -> str:
         """
@@ -90,7 +91,7 @@ class DbusDockerImageRequested(BaseObject, ServiceInterface):
         """
         Transforms given event to signal parameters.
         :param event: The event to transform.
-        :type event: org.acmsl.artifact.events.licdata.DockerImageRequested
+        :type event: pythoneda.shared.artifact.events.DockerImageRequested
         :return: The event information.
         :rtype: List[str]
         """
@@ -106,7 +107,7 @@ class DbusDockerImageRequested(BaseObject, ServiceInterface):
         """
         Retrieves the signature for the parameters of given event.
         :param event: The domain event.
-        :type event: org.acmsl.artifact.events.licdata.DockerImageRequested
+        :type event: pythoneda.shared.artifact.events.DockerImageRequested
         :return: The signature.
         :rtype: str
         """
@@ -119,7 +120,7 @@ class DbusDockerImageRequested(BaseObject, ServiceInterface):
         :param message: The message.
         :type message: dbus_next.Message
         :return: The DockerImageRequested event.
-        :rtype: org.acmsl.artifact.events.licdata.DockerImageRequested
+        :rtype: pythoneda.shared.artifact.events.DockerImageRequested
         """
         image_name, image_version, event_id, prev_event_ids = message.body
         return DockerImageRequested(
