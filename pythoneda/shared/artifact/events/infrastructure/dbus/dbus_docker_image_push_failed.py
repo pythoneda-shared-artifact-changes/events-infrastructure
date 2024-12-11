@@ -1,8 +1,8 @@
 # vim: set fileencoding=utf-8
 """
-pythoneda/shared/artifact/events/infrastructure/dbus/dbus_docker_image_pushed.py
+pythoneda/shared/artifact/events/infrastructure/dbus/dbus_docker_image_push_failed.py
 
-This file defines the DbusDockerImagePushed class.
+This file defines the DbusDockerImagePushFailed class.
 
 Copyright (C) 2024-today rydnr's pythoneda-shared-artifact/events-infrastructure
 
@@ -23,19 +23,19 @@ from dbus_next import Message
 from dbus_next.service import ServiceInterface, signal
 import json
 from pythoneda.shared import BaseObject, Event
-from pythoneda.shared.artifact.events import DockerImagePushed
+from pythoneda.shared.artifact.events import DockerImagePushFailed
 from pythoneda.shared.artifact.events.infrastructure.dbus import DBUS_PATH
 from typing import List
 
 
-class DbusDockerImagePushed(BaseObject, ServiceInterface):
+class DbusDockerImagePushFailed(BaseObject, ServiceInterface):
     """
-    D-Bus interface for DockerImagePushed.
+    D-Bus interface for DockerImagePushFailed.
 
-    Class name: DbusDockerImagePushed
+    Class name: DbusDockerImagePushFailed
 
     Responsibilities:
-        - Define the d-bus interface for the DockerImagePushed event.
+        - Define the d-bus interface for the DockerImagePushFailed event.
 
     Collaborators:
         - None
@@ -43,29 +43,32 @@ class DbusDockerImagePushed(BaseObject, ServiceInterface):
 
     def __init__(self):
         """
-        Creates a new DbusDockerImagePushed.
+        Creates a new DbusDockerImagePushFailed.
         """
-        super().__init__("Pythoneda_Artifact_DockerImagePushed")
+        super().__init__("Pythoneda_Artifact_DockerImagePushFailed")
 
     @signal()
-    def DockerImagePushed(
+    def DockerImagePushFailed(
         self,
         imageName: "s",
         imageVersion: "s",
         imageUrl: "s",
         registryUrl: "s",
+        cause: "s",
         metadata: "s",
     ):
         """
-        Defines the DockerImagePushed d-bus signal.
+        Defines the DockerImagePushFailed d-bus signal.
         :param imageName: The image name.
         :type imageName: str
         :param imageVersion: The version.
         :type imageVersion: str
-        :param imageUrl: The url the image is pushed.
+        :param imageUrl: The url the image is push_failed.
         :type imageUrl: str
         :param registryUrl: The url of the registry.
         :type registryUrl: str
+        :param cause: The error cause.
+        :type cause: str
         :param metadata: The image metadata.
         :type metadata: str
         """
@@ -91,11 +94,11 @@ class DbusDockerImagePushed(BaseObject, ServiceInterface):
         return DBUS_PATH + "/" + event.image_name.replace("-", "_")
 
     @classmethod
-    def transform(cls, event: DockerImagePushed) -> List[str]:
+    def transform(cls, event: DockerImagePushFailed) -> List[str]:
         """
         Transforms given event to signal parameters.
         :param event: The event to transform.
-        :type event: pythoneda.shared.artifact.events.DockerImagePushed
+        :type event: pythoneda.shared.artifact.events.DockerImagePushFailed
         :return: The event information.
         :rtype: List[str]
         """
@@ -104,45 +107,46 @@ class DbusDockerImagePushed(BaseObject, ServiceInterface):
             event.image_version,
             event.image_url,
             event.registry_url,
-            event.metadata,
+            event.cause,
+            json.dumps(event.metadata),
             event.id,
             json.dumps(event.previous_event_ids),
         ]
 
     @classmethod
-    def sign(cls, event: DockerImagePushed) -> str:
+    def sign(cls, event: DockerImagePushFailed) -> str:
         """
         Retrieves the signature for the parameters of given event.
         :param event: The domain event.
-        :type event: pythoneda.shared.artifact.events.DockerImagPushed
+        :type event: pythoneda.shared.artifact.events.DockerImagPushFailed
         :return: The signature.
         :rtype: str
         """
-        return "sssssss"
+        return "ssssssss"
 
     @classmethod
-    def parse(cls, message: Message) -> DockerImagePushed:
+    def parse(cls, message: Message) -> DockerImagePushFailed:
         """
-        Parses given d-bus message containing a DockerImagePushed event.
+        Parses given d-bus message containing a DockerImagePushFailed event.
         :param message: The message.
         :type message: dbus_next.Message
-        :return: The DockerImagePushed event.
-        :rtype: pythoneda.shared.artifact.events.DockerImagPushed
+        :return: The DockerImagePushFailed event.
+        :rtype: pythoneda.shared.artifact.events.DockerImagPushFailed
         """
-        (
+        image_name,
+        image_version,
+        image_url,
+        registry_url,
+        cause,
+        metadata,
+        event_id,
+        prev_event_ids = message.body
+        return DockerImagePushFailed(
             image_name,
             image_version,
             image_url,
             registry_url,
-            metadata,
-            event_id,
-            prev_event_ids,
-        ) = message.body
-        return DockerImagePushed(
-            image_name,
-            image_version,
-            image_url,
-            registry_url,
+            cause,
             json.loads(metadata),
             event_id,
             json.loads(prev_event_ids),

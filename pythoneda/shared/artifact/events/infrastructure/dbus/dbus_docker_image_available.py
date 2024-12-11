@@ -77,7 +77,7 @@ class DbusDockerImageAvailable(BaseObject, ServiceInterface):
         :return: Such value.
         :rtype: str
         """
-        return DBUS_PATH + "/" + event.image_name
+        return DBUS_PATH + "/" + event.image_name.replace("-", "_")
 
     @classmethod
     def transform(cls, event: DockerImageAvailable) -> List[str]:
@@ -92,6 +92,7 @@ class DbusDockerImageAvailable(BaseObject, ServiceInterface):
             event.image_name,
             event.image_version,
             event.image_url,
+            json.dumps(event.metadata),
             event.id,
             json.dumps(event.previous_event_ids),
         ]
@@ -105,7 +106,7 @@ class DbusDockerImageAvailable(BaseObject, ServiceInterface):
         :return: The signature.
         :rtype: str
         """
-        return "sssss"
+        return "ssssss"
 
     @classmethod
     def parse(cls, message: Message) -> DockerImageAvailable:
@@ -116,11 +117,14 @@ class DbusDockerImageAvailable(BaseObject, ServiceInterface):
         :return: The DockerImageAvailable event.
         :rtype: pythoneda.shared.artifact.events.DockerImagAvailable
         """
-        image_name, image_version, image_url, event_id, prev_event_ids = message.body
+        image_name, image_version, image_url, metadata, event_id, prev_event_ids = (
+            message.body
+        )
         return DockerImageAvailable(
             image_name,
             image_version,
             image_url,
+            json.loads(metadata),
             None,
             event_id,
             json.loads(prev_event_ids),

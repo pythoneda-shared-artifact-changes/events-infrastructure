@@ -48,13 +48,15 @@ class DbusDockerImageRequested(BaseObject, ServiceInterface):
         super().__init__("Pythoneda_Artifact_DockerImageRequested")
 
     @signal()
-    def DockerImageRequested(self, imageName: "s", imageVersion: "s"):
+    def DockerImageRequested(self, imageName: "s", imageVersion: "s", medatada: "s"):
         """
         Defines the DockerImageRequested d-bus signal.
         :param imageName: The image name.
         :type imageName: str
         :param imageVersion: The version.
         :type imageVersion: str
+        :param metadata: The metadata.
+        :type metadata: str
         """
         pass
 
@@ -75,7 +77,7 @@ class DbusDockerImageRequested(BaseObject, ServiceInterface):
         :return: Such value.
         :rtype: str
         """
-        return DBUS_PATH + "/" + event.image_name
+        return DBUS_PATH + "/" + event.image_name.replace("-", "_")
 
     @property
     def bus_type(self) -> str:
@@ -98,6 +100,7 @@ class DbusDockerImageRequested(BaseObject, ServiceInterface):
         return [
             event.image_name,
             event.image_version,
+            json.dumps(event.metadata),
             event.id,
             json.dumps(event.previous_event_ids),
         ]
@@ -111,7 +114,7 @@ class DbusDockerImageRequested(BaseObject, ServiceInterface):
         :return: The signature.
         :rtype: str
         """
-        return "ssss"
+        return "sssss"
 
     @classmethod
     def parse(cls, message: Message) -> DockerImageRequested:
@@ -122,9 +125,13 @@ class DbusDockerImageRequested(BaseObject, ServiceInterface):
         :return: The DockerImageRequested event.
         :rtype: pythoneda.shared.artifact.events.DockerImageRequested
         """
-        image_name, image_version, event_id, prev_event_ids = message.body
+        image_name, image_version, metadata, event_id, prev_event_ids = message.body
         return DockerImageRequested(
-            image_name, image_version, None, event_id, json.loads(prev_event_ids)
+            image_name,
+            image_version,
+            json.loads(metadata),
+            event_id,
+            json.loads(prev_event_ids),
         )
 
 

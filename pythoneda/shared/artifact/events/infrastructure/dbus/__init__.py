@@ -27,7 +27,10 @@ from .dbus_change_staged import DbusChangeStaged
 from .dbus_committed_changes_pushed import DbusCommittedChangesPushed
 from .dbus_committed_changes_tagged import DbusCommittedChangesTagged
 from .dbus_docker_image_available import DbusDockerImageAvailable
+from .dbus_docker_image_failed import DbusDockerImageFailed
 from .dbus_docker_image_pushed import DbusDockerImagePushed
+from .dbus_docker_image_push_failed import DbusDockerImagePushFailed
+from .dbus_docker_image_push_requested import DbusDockerImagePushRequested
 from .dbus_docker_image_requested import DbusDockerImageRequested
 from .dbus_staged_changes_committed import DbusStagedChangesCommitted
 from .dbus_tag_pushed import DbusTagPushed

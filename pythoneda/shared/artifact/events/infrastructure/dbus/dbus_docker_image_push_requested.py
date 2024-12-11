@@ -1,8 +1,8 @@
 # vim: set fileencoding=utf-8
 """
-pythoneda/shared/artifact/events/infrastructure/dbus/dbus_docker_image_pushed.py
+pythoneda/shared/artifact/events/infrastructure/dbus/dbus_docker_image_push_requested.py
 
-This file defines the DbusDockerImagePushed class.
+This file defines the DbusDockerImagePushRequested class.
 
 Copyright (C) 2024-today rydnr's pythoneda-shared-artifact/events-infrastructure
 
@@ -19,23 +19,23 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
-from dbus_next import Message
+from dbus_next import BusType, Message
 from dbus_next.service import ServiceInterface, signal
 import json
 from pythoneda.shared import BaseObject, Event
-from pythoneda.shared.artifact.events import DockerImagePushed
+from pythoneda.shared.artifact.events import DockerImagePushRequested
 from pythoneda.shared.artifact.events.infrastructure.dbus import DBUS_PATH
 from typing import List
 
 
-class DbusDockerImagePushed(BaseObject, ServiceInterface):
+class DbusDockerImagePushRequested(BaseObject, ServiceInterface):
     """
-    D-Bus interface for DockerImagePushed.
+    D-Bus interface for DockerImagePushRequested
 
-    Class name: DbusDockerImagePushed
+    Class name: DbusDockerImagePushRequested
 
     Responsibilities:
-        - Define the d-bus interface for the DockerImagePushed event.
+        - Define the d-bus interface for the DockerImagePushRequested event.
 
     Collaborators:
         - None
@@ -43,30 +43,25 @@ class DbusDockerImagePushed(BaseObject, ServiceInterface):
 
     def __init__(self):
         """
-        Creates a new DbusDockerImagePushed.
+        Creates a new DbusDockerImagePushRequested.
         """
-        super().__init__("Pythoneda_Artifact_DockerImagePushed")
+        super().__init__("Pythoneda_Artifact_DockerImagePushRequested")
 
     @signal()
-    def DockerImagePushed(
-        self,
-        imageName: "s",
-        imageVersion: "s",
-        imageUrl: "s",
-        registryUrl: "s",
-        metadata: "s",
+    def DockerImagePushRequested(
+        self, imageName: "s", imageVersion: "s", registryUrl: "s", metadata: "s"
     ):
         """
-        Defines the DockerImagePushed d-bus signal.
+        Defines the DockerImagePushRequested d-bus signal.
         :param imageName: The image name.
         :type imageName: str
         :param imageVersion: The version.
         :type imageVersion: str
-        :param imageUrl: The url the image is pushed.
+        :param imageUrl: The url of the image.
         :type imageUrl: str
         :param registryUrl: The url of the registry.
         :type registryUrl: str
-        :param metadata: The image metadata.
+        :param metadata: The metadata.
         :type metadata: str
         """
         pass
@@ -90,12 +85,21 @@ class DbusDockerImagePushed(BaseObject, ServiceInterface):
         """
         return DBUS_PATH + "/" + event.image_name.replace("-", "_")
 
+    @property
+    def bus_type(self) -> str:
+        """
+        Retrieves the d-bus type.
+        :return: Such value.
+        :rtype: str
+        """
+        return BusType.SYSTEM
+
     @classmethod
-    def transform(cls, event: DockerImagePushed) -> List[str]:
+    def transform(cls, event: DockerImagePushRequested) -> List[str]:
         """
         Transforms given event to signal parameters.
         :param event: The event to transform.
-        :type event: pythoneda.shared.artifact.events.DockerImagePushed
+        :type event: pythoneda.shared.artifact.events.DockerImagePushRequested
         :return: The event information.
         :rtype: List[str]
         """
@@ -104,41 +108,39 @@ class DbusDockerImagePushed(BaseObject, ServiceInterface):
             event.image_version,
             event.image_url,
             event.registry_url,
-            event.metadata,
+            json.dumps(event.metadata),
             event.id,
             json.dumps(event.previous_event_ids),
         ]
 
     @classmethod
-    def sign(cls, event: DockerImagePushed) -> str:
+    def sign(cls, event: DockerImagePushRequested) -> str:
         """
         Retrieves the signature for the parameters of given event.
         :param event: The domain event.
-        :type event: pythoneda.shared.artifact.events.DockerImagPushed
+        :type event: pythoneda.shared.artifact.events.DockerImagePushRequested
         :return: The signature.
         :rtype: str
         """
         return "sssssss"
 
     @classmethod
-    def parse(cls, message: Message) -> DockerImagePushed:
+    def parse(cls, message: Message) -> DockerImagePushRequested:
         """
-        Parses given d-bus message containing a DockerImagePushed event.
+        Parses given d-bus message containing a DockerImagePushRequested event.
         :param message: The message.
         :type message: dbus_next.Message
-        :return: The DockerImagePushed event.
-        :rtype: pythoneda.shared.artifact.events.DockerImagPushed
+        :return: The DockerImagePushRequested event.
+        :rtype: pythoneda.shared.artifact.events.DockerImagePushRequested
         """
-        (
-            image_name,
-            image_version,
-            image_url,
-            registry_url,
-            metadata,
-            event_id,
-            prev_event_ids,
-        ) = message.body
-        return DockerImagePushed(
+        image_name,
+        image_version,
+        image_url,
+        registry_url,
+        metadata,
+        event_id,
+        prev_event_ids = message.body
+        return DockerImagePushRequested(
             image_name,
             image_version,
             image_url,
