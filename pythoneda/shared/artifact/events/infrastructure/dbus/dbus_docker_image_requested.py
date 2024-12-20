@@ -100,9 +100,9 @@ class DbusDockerImageRequested(BaseObject, ServiceInterface):
         return [
             event.image_name,
             event.image_version,
-            json.dumps(event.metadata),
-            event.id,
+            json.dumps(event.metadata, ensure_ascii=False),
             json.dumps(event.previous_event_ids),
+            event.id,
         ]
 
     @classmethod
@@ -125,13 +125,13 @@ class DbusDockerImageRequested(BaseObject, ServiceInterface):
         :return: The DockerImageRequested event.
         :rtype: pythoneda.shared.artifact.events.DockerImageRequested
         """
-        image_name, image_version, metadata, event_id, prev_event_ids = message.body
+        image_name, image_version, metadata, prev_event_ids, event_id = message.body
         return DockerImageRequested(
             image_name,
             image_version,
             json.loads(metadata),
-            event_id,
             json.loads(prev_event_ids),
+            event_id,
         )
 
 

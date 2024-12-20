@@ -85,8 +85,8 @@ class DbusTagPushed(BaseObject, ServiceInterface):
             event.commit,
             event.repository_url,
             event.branch,
-            event.id,
             json.dumps(event.previous_event_ids),
+            event.id,
         ]
 
     @classmethod
@@ -109,15 +109,14 @@ class DbusTagPushed(BaseObject, ServiceInterface):
         :return: The TagPushed event.
         :rtype: pythoneda.shared.artifact.events.TagPushed
         """
-        tag, commit, repository_url, branch, event_id, prev_event_ids = message.body
+        tag, commit, repository_url, branch, prev_event_ids, event_id = message.body
         return TagPushed(
             tag,
             commit,
             repository_url,
             branch,
-            None,
-            event_id,
             json.loads(prev_event_ids),
+            event_id,
         )
 
 

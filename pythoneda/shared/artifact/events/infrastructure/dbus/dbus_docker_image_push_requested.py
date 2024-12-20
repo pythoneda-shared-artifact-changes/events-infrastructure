@@ -108,9 +108,9 @@ class DbusDockerImagePushRequested(BaseObject, ServiceInterface):
             event.image_version,
             event.image_url,
             event.registry_url,
-            json.dumps(event.metadata),
-            event.id,
+            json.dumps(event.metadata, ensure_ascii=False),
             json.dumps(event.previous_event_ids),
+            event.id,
         ]
 
     @classmethod
@@ -138,16 +138,16 @@ class DbusDockerImagePushRequested(BaseObject, ServiceInterface):
         image_url,
         registry_url,
         metadata,
-        event_id,
-        prev_event_ids = message.body
+        prev_event_ids,
+        event_id = message.body
         return DockerImagePushRequested(
             image_name,
             image_version,
             image_url,
             registry_url,
             json.loads(metadata),
-            event_id,
             json.loads(prev_event_ids),
+            event_id,
         )
 
 

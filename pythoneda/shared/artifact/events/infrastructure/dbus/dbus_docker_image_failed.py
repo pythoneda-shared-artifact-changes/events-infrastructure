@@ -96,10 +96,10 @@ class DbusDockerImageFailed(BaseObject, ServiceInterface):
         return [
             event.image_name,
             event.image_version,
-            json.dumps(event.metadata),
+            json.dumps(event.metadata, ensure_ascii=False),
             event.cause,
-            event.id,
             json.dumps(event.previous_event_ids),
+            event.id,
         ]
 
     @classmethod
@@ -126,16 +126,15 @@ class DbusDockerImageFailed(BaseObject, ServiceInterface):
         image_version,
         metadata,
         cause,
-        event_id,
-        prev_event_ids = message.body
+        prev_event_ids,
+        event_id = message.body
         return DockerImageFailed(
             image_name,
             image_version,
             json.loads(metadata),
             cause,
-            None,
-            event_id,
             json.loads(prev_event_ids),
+            event_id,
         )
 
 

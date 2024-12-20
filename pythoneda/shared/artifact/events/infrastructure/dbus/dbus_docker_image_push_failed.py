@@ -107,10 +107,11 @@ class DbusDockerImagePushFailed(BaseObject, ServiceInterface):
             event.image_version,
             event.image_url,
             event.registry_url,
+            json.dumps(event.metadata, ensure_ascii=False),
             event.cause,
             json.dumps(event.metadata),
-            event.id,
             json.dumps(event.previous_event_ids),
+            event.id,
         ]
 
     @classmethod
@@ -139,8 +140,8 @@ class DbusDockerImagePushFailed(BaseObject, ServiceInterface):
         registry_url,
         cause,
         metadata,
-        event_id,
-        prev_event_ids = message.body
+        prev_event_ids,
+        event_id = message.body
         return DockerImagePushFailed(
             image_name,
             image_version,
@@ -148,8 +149,8 @@ class DbusDockerImagePushFailed(BaseObject, ServiceInterface):
             registry_url,
             cause,
             json.loads(metadata),
-            event_id,
             json.loads(prev_event_ids),
+            event_id,
         )
 
 

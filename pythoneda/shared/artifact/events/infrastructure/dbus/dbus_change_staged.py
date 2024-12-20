@@ -74,7 +74,7 @@ class DbusChangeStaged(BaseObject, ServiceInterface):
         :return: The event information.
         :rtype: List[str]
         """
-        return [event.change.to_json(), event.id, json.dumps(event.previous_event_ids)]
+        return [event.change.to_json(), json.dumps(event.previous_event_ids), event.id]
 
     @classmethod
     def sign(cls, event: ChangeStaged) -> str:
@@ -96,9 +96,9 @@ class DbusChangeStaged(BaseObject, ServiceInterface):
         :return: The ChangeStaged event.
         :rtype: pythoneda.shared.artifact.events.ChangeStaged
         """
-        change, event_id, prev_event_ids = message.body
+        change, prev_event_ids, event_id = message.body
         return ChangeStaged(
-            Change.from_json(change), None, event_id, json.loads(prev_event_ids)
+            Change.from_json(change), json.loads(prev_event_ids), event_id
         )
 
 

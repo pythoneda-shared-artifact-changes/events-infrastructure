@@ -80,8 +80,8 @@ class DbusCommittedChangesTagged(BaseObject, ServiceInterface):
             event.repository_url,
             event.branch,
             event.repository_folder,
-            event.id,
             json.dumps(event.previous_event_ids),
+            event.id,
         ]
 
     @classmethod
@@ -110,8 +110,8 @@ class DbusCommittedChangesTagged(BaseObject, ServiceInterface):
             repository_url,
             branch,
             folder,
-            event_id,
             prev_event_ids,
+            event_id,
         ) = message.body
         return CommittedChangesTagged(
             tag,
@@ -119,9 +119,8 @@ class DbusCommittedChangesTagged(BaseObject, ServiceInterface):
             repository_url,
             branch,
             folder,
-            None,
-            event_id,
             json.loads(prev_event_ids),
+            event_id,
         )
 
 

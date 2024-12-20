@@ -92,9 +92,9 @@ class DbusDockerImageAvailable(BaseObject, ServiceInterface):
             event.image_name,
             event.image_version,
             event.image_url,
-            json.dumps(event.metadata),
-            event.id,
+            json.dumps(event.metadata, ensure_ascii=False),
             json.dumps(event.previous_event_ids),
+            event.id,
         ]
 
     @classmethod
@@ -117,7 +117,7 @@ class DbusDockerImageAvailable(BaseObject, ServiceInterface):
         :return: The DockerImageAvailable event.
         :rtype: pythoneda.shared.artifact.events.DockerImagAvailable
         """
-        image_name, image_version, image_url, metadata, event_id, prev_event_ids = (
+        image_name, image_version, image_url, metadata, prev_event_ids, event_id = (
             message.body
         )
         return DockerImageAvailable(
@@ -125,9 +125,8 @@ class DbusDockerImageAvailable(BaseObject, ServiceInterface):
             image_version,
             image_url,
             json.loads(metadata),
-            None,
-            event_id,
             json.loads(prev_event_ids),
+            event_id,
         )
 
 
