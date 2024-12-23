@@ -20,15 +20,16 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 from dbus_next import Message
-from dbus_next.service import ServiceInterface, signal
+from dbus_next.service import signal
 import json
-from pythoneda.shared import BaseObject
+from pythoneda.shared import Event
+from pythoneda.shared.infrastructure.dbus import DbusEvent
 from pythoneda.shared.artifact.events import CommittedChangesTagged
 from pythoneda.shared.artifact.events.infrastructure.dbus import DBUS_PATH
-from typing import List
+from typing import List, Type
 
 
-class DbusCommittedChangesTagged(BaseObject, ServiceInterface):
+class DbusCommittedChangesTagged(DbusEvent):
     """
     D-Bus interface for CommittedChangesTagged
 
@@ -122,6 +123,15 @@ class DbusCommittedChangesTagged(BaseObject, ServiceInterface):
             json.loads(prev_event_ids),
             event_id,
         )
+
+    @classmethod
+    def event_class(cls) -> Type[Event]:
+        """
+        Retrieves the specific event class.
+        :return: Such class.
+        :rtype: type(pythoneda.shared.Event)
+        """
+        return CommittedChangesTagged
 
 
 # vim: syntax=python ts=4 sw=4 sts=4 tw=79 sr et
