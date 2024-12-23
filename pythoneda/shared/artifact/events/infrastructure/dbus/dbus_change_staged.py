@@ -46,7 +46,7 @@ class DbusChangeStaged(DbusEvent):
         """
         Creates a new DbusChangeStaged.
         """
-        super().__init__("Pythoneda_Artifact_ChangeStaged")
+        super().__init__("Pythoneda_Artifact_ChangeStaged", DBUS_PATH)
 
     @signal()
     def ChangeStaged(self, change: "s"):
@@ -56,15 +56,6 @@ class DbusChangeStaged(DbusEvent):
         :type change: str
         """
         pass
-
-    @property
-    def path(self) -> str:
-        """
-        Retrieves the d-bus path.
-        :return: Such value.
-        :rtype: str
-        """
-        return DBUS_PATH
 
     @classmethod
     def transform(cls, event: ChangeStaged) -> List[str]:

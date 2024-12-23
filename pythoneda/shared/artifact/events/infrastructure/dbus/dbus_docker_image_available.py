@@ -46,7 +46,7 @@ class DbusDockerImageAvailable(DbusEvent):
         """
         Creates a new DbusDockerImageAvailable.
         """
-        super().__init__("Pythoneda_Artifact_DockerImageAvailable")
+        super().__init__("Pythoneda_Artifact_DockerImageAvailable", DBUS_PATH)
 
     @signal()
     def DockerImageAvailable(self, imageName: "s", imageVersion: "s", imageUrl: "s"):
@@ -60,15 +60,6 @@ class DbusDockerImageAvailable(DbusEvent):
         :type imageUrl: str
         """
         pass
-
-    @property
-    def path(self) -> str:
-        """
-        Retrieves the d-bus path.
-        :return: Such value.
-        :rtype: str
-        """
-        return DBUS_PATH
 
     def build_path(self, event: Event) -> str:
         """

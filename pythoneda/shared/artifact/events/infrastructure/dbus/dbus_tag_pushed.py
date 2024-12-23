@@ -26,7 +26,7 @@ from pythoneda.shared import Event
 from pythoneda.shared.infrastructure.dbus import DbusEvent
 from pythoneda.shared.artifact.events import TagPushed
 from pythoneda.shared.artifact.events.infrastructure.dbus import DBUS_PATH
-from typing import List
+from typing import List, Type
 
 
 class DbusTagPushed(DbusEvent):
@@ -46,7 +46,7 @@ class DbusTagPushed(DbusEvent):
         """
         Creates a new DbusTagPushed.
         """
-        super().__init__("Pythoneda_Artifact_TagPushed")
+        super().__init__("Pythoneda_Artifact_TagPushed", DBUS_PATH)
 
     @signal()
     def TagPushed(self, tag: "s", commit: "s", repositoryUrl: "s", branch: "s"):
@@ -64,14 +64,6 @@ class DbusTagPushed(DbusEvent):
         pass
 
     @property
-    def path(self) -> str:
-        """
-        Retrieves the d-bus path.
-        :return: Such value.
-        :rtype: str
-        """
-        return DBUS_PATH
-
     @classmethod
     def transform(cls, event: TagPushed) -> List[str]:
         """

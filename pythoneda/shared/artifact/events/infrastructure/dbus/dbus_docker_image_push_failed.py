@@ -46,7 +46,7 @@ class DbusDockerImagePushFailed(DbusEvent):
         """
         Creates a new DbusDockerImagePushFailed.
         """
-        super().__init__("Pythoneda_Artifact_DockerImagePushFailed")
+        super().__init__("Pythoneda_Artifact_DockerImagePushFailed", DBUS_PATH)
 
     @signal()
     def DockerImagePushFailed(
@@ -75,15 +75,6 @@ class DbusDockerImagePushFailed(DbusEvent):
         """
         pass
 
-    @property
-    def path(self) -> str:
-        """
-        Retrieves the d-bus path.
-        :return: Such value.
-        :rtype: str
-        """
-        return DBUS_PATH
-
     def build_path(self, event: Event) -> str:
         """
         Retrieves the d-bus path for given event.
@@ -92,7 +83,7 @@ class DbusDockerImagePushFailed(DbusEvent):
         :return: Such value.
         :rtype: str
         """
-        return DBUS_PATH + "/" + event.image_name.replace("-", "_")
+        return self.path + "/" + event.image_name.replace("-", "_")
 
     @classmethod
     def transform(cls, event: DockerImagePushFailed) -> List[str]:

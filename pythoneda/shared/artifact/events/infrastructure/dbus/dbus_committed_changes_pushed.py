@@ -46,7 +46,7 @@ class DbusCommittedChangesPushed(DbusEvent):
         """
         Creates a new DbusCommittedChangesPushed.
         """
-        super().__init__("Pythoneda_Artifact_CommittedChangesPushed")
+        super().__init__("Pythoneda_Artifact_CommittedChangesPushed", DBUS_PATH)
 
     @signal()
     def CommittedChangesPushed(self, change: "s", commit: "s"):
@@ -58,15 +58,6 @@ class DbusCommittedChangesPushed(DbusEvent):
         :type commit: str
         """
         pass
-
-    @property
-    def path(self) -> str:
-        """
-        Retrieves the d-bus path.
-        :return: Such value.
-        :rtype: str
-        """
-        return DBUS_PATH
 
     @classmethod
     def transform(cls, event: CommittedChangesPushed) -> List[str]:
