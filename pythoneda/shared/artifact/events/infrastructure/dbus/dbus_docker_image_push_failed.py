@@ -22,11 +22,11 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 from dbus_next import Message
 from dbus_next.service import signal
 import json
-from pythoneda.shared import Event
+from pythoneda.shared import Event, Invariants, PythonedaApplication
 from pythoneda.shared.infrastructure.dbus import DbusEvent
 from pythoneda.shared.artifact.events import DockerImagePushFailed
 from pythoneda.shared.artifact.events.infrastructure.dbus import DBUS_PATH
-from typing import List, Type
+from typing import List, Tuple, Type
 
 
 class DbusDockerImagePushFailed(DbusEvent):
@@ -46,7 +46,17 @@ class DbusDockerImagePushFailed(DbusEvent):
         """
         Creates a new DbusDockerImagePushFailed.
         """
-        super().__init__("Pythoneda_Artifact_DockerImagePushFailed", DBUS_PATH)
+        super().__init__(DBUS_PATH)
+
+    @classmethod
+    @property
+    def name(cls) -> str:
+        """
+        Retrieves the d-bus interface name.
+        :return: Such value.
+        :rtype: str
+        """
+        return "Pythoneda_Artifact_DockerImagePushFailed"
 
     @signal()
     def DockerImagePushFailed(
@@ -103,6 +113,7 @@ class DbusDockerImagePushFailed(DbusEvent):
             event.cause,
             json.dumps(event.metadata),
             json.dumps(event.previous_event_ids),
+            Invariants.instance().to_json(event),
             event.id,
         ]
 
@@ -115,16 +126,20 @@ class DbusDockerImagePushFailed(DbusEvent):
         :return: The signature.
         :rtype: str
         """
-        return "ssssssss"
+        return "ssssssssss"
 
     @classmethod
-    def parse(cls, message: Message) -> DockerImagePushFailed:
+    def parse(
+        cls, message: Message, app: PythonedaApplication
+    ) -> Tuple[str, DockerImagePushFailed]:
         """
         Parses given d-bus message containing a DockerImagePushFailed event.
         :param message: The message.
         :type message: dbus_next.Message
-        :return: The DockerImagePushFailed event.
-        :rtype: pythoneda.shared.artifact.events.DockerImagPushFailed
+        :param app: The PythonEDA instance.
+        :type app: pythoneda.shared.PythonedaApplication
+        :return: A tuple with the invariants and the DockerImagPushFailed event.
+        :rtype: Tuple[str, pythoneda.shared.artifact.events.DockerImagPushFailed]
         """
         image_name,
         image_version,
@@ -133,16 +148,20 @@ class DbusDockerImagePushFailed(DbusEvent):
         cause,
         metadata,
         prev_event_ids,
+        invariants,
         event_id = message.body
-        return DockerImagePushFailed(
-            image_name,
-            image_version,
-            image_url,
-            registry_url,
-            cause,
-            json.loads(metadata),
-            json.loads(prev_event_ids),
-            event_id,
+        return (
+            invariants,
+            DockerImagePushFailed(
+                image_name,
+                image_version,
+                image_url,
+                registry_url,
+                cause,
+                json.loads(metadata),
+                json.loads(prev_event_ids),
+                event_id,
+            ),
         )
 
     @classmethod

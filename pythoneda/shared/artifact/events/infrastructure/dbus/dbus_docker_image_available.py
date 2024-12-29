@@ -22,11 +22,11 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 from dbus_next import Message
 from dbus_next.service import signal
 import json
-from pythoneda.shared import Event
+from pythoneda.shared import Event, Invariants, PythonedaApplication
 from pythoneda.shared.infrastructure.dbus import DbusEvent
 from pythoneda.shared.artifact.events import DockerImageAvailable
 from pythoneda.shared.artifact.events.infrastructure.dbus import DBUS_PATH
-from typing import List, Type
+from typing import List, Tuple, Type
 
 
 class DbusDockerImageAvailable(DbusEvent):
@@ -46,7 +46,17 @@ class DbusDockerImageAvailable(DbusEvent):
         """
         Creates a new DbusDockerImageAvailable.
         """
-        super().__init__("Pythoneda_Artifact_DockerImageAvailable", DBUS_PATH)
+        super().__init__(DBUS_PATH)
+
+    @classmethod
+    @property
+    def name(cls) -> str:
+        """
+        Retrieves the d-bus interface name.
+        :return: Such value.
+        :rtype: str
+        """
+        return "Pythoneda_Artifact_DockerImageAvailable"
 
     @signal()
     def DockerImageAvailable(self, imageName: "s", imageVersion: "s", imageUrl: "s"):
@@ -86,6 +96,7 @@ class DbusDockerImageAvailable(DbusEvent):
             event.image_url,
             json.dumps(event.metadata, ensure_ascii=False),
             json.dumps(event.previous_event_ids),
+            Invariants.instance().to_json(event),
             event.id,
         ]
 
@@ -98,27 +109,40 @@ class DbusDockerImageAvailable(DbusEvent):
         :return: The signature.
         :rtype: str
         """
-        return "ssssss"
+        return "sssssss"
 
     @classmethod
-    def parse(cls, message: Message) -> DockerImageAvailable:
+    def parse(
+        cls, message: Message, app: PythonedaApplication
+    ) -> Tuple[str, DockerImageAvailable]:
         """
         Parses given d-bus message containing a DockerImageAvailable event.
         :param message: The message.
         :type message: dbus_next.Message
-        :return: The DockerImageAvailable event.
-        :rtype: pythoneda.shared.artifact.events.DockerImagAvailable
+        :param app: The PythonEDA instance.
+        :type app: pythoneda.shared.PythonedaApplication
+        :return: A tuple with the invariants and the DockerImageAvailable event.
+        :rtype: Tuple[str, pythoneda.shared.artifact.events.DockerImageAvailable]
         """
-        image_name, image_version, image_url, metadata, prev_event_ids, event_id = (
-            message.body
-        )
-        return DockerImageAvailable(
+        (
             image_name,
             image_version,
             image_url,
-            json.loads(metadata),
-            json.loads(prev_event_ids),
+            metadata,
+            prev_event_ids,
+            invariants,
             event_id,
+        ) = message.body
+        return (
+            invariants,
+            DockerImageAvailable(
+                image_name,
+                image_version,
+                image_url,
+                json.loads(metadata),
+                json.loads(prev_event_ids),
+                event_id,
+            ),
         )
 
     @classmethod

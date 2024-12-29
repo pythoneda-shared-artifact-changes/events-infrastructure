@@ -22,11 +22,11 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 from dbus_next import Message
 from dbus_next.service import signal
 import json
-from pythoneda.shared import Event
+from pythoneda.shared import Event, Invariants, PythonedaApplication
 from pythoneda.shared.infrastructure.dbus import DbusEvent
 from pythoneda.shared.artifact.events import DockerImageRequested
 from pythoneda.shared.artifact.events.infrastructure.dbus import DBUS_PATH
-from typing import List, Type
+from typing import List, Tuple, Type
 
 
 class DbusDockerImageRequested(DbusEvent):
@@ -46,7 +46,17 @@ class DbusDockerImageRequested(DbusEvent):
         """
         Creates a new DbusDockerImageRequested.
         """
-        super().__init__("Pythoneda_Artifact_DockerImageRequested", DBUS_PATH)
+        super().__init__(DBUS_PATH)
+
+    @classmethod
+    @property
+    def name(cls) -> str:
+        """
+        Retrieves the d-bus interface name.
+        :return: Such value.
+        :rtype: str
+        """
+        return "Pythoneda_Artifact_DockerImageRequested"
 
     @signal()
     def DockerImageRequested(self, imageName: "s", imageVersion: "s", medatada: "s"):
@@ -85,6 +95,7 @@ class DbusDockerImageRequested(DbusEvent):
             event.image_version,
             json.dumps(event.metadata, ensure_ascii=False),
             json.dumps(event.previous_event_ids),
+            Invariants.instance().to_json(event),
             event.id,
         ]
 
@@ -97,24 +108,38 @@ class DbusDockerImageRequested(DbusEvent):
         :return: The signature.
         :rtype: str
         """
-        return "sssss"
+        return "ssssss"
 
     @classmethod
-    def parse(cls, message: Message) -> DockerImageRequested:
+    def parse(
+        cls, message: Message, app: PythonedaApplication
+    ) -> Tuple[str, DockerImageRequested]:
         """
         Parses given d-bus message containing a DockerImageRequested event.
         :param message: The message.
         :type message: dbus_next.Message
-        :return: The DockerImageRequested event.
-        :rtype: pythoneda.shared.artifact.events.DockerImageRequested
+        :param app: The PythonEDA instance.
+        :type app: pythoneda.shared.PythonedaApplication
+        :return: A tuple with the invariants and the DockerImageRequested event.
+        :rtype: Tuple[str, pythoneda.shared.artifact.events.DockerImageRequested]
         """
-        image_name, image_version, metadata, prev_event_ids, event_id = message.body
-        return DockerImageRequested(
+        (
             image_name,
             image_version,
-            json.loads(metadata),
-            json.loads(prev_event_ids),
+            metadata,
+            prev_event_ids,
+            invariants,
             event_id,
+        ) = message.body
+        return (
+            invariants,
+            DockerImageRequested(
+                image_name,
+                image_version,
+                json.loads(metadata),
+                json.loads(prev_event_ids),
+                event_id,
+            ),
         )
 
     @classmethod

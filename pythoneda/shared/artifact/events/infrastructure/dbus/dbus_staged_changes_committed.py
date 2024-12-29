@@ -22,11 +22,11 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 from dbus_next import Message
 from dbus_next.service import signal
 import json
-from pythoneda.shared import Event
+from pythoneda.shared import Event, Invariants, PythonedaApplication
 from pythoneda.shared.infrastructure.dbus import DbusEvent
 from pythoneda.shared.artifact.events import Change, StagedChangesCommitted
 from pythoneda.shared.artifact.events.infrastructure.dbus import DBUS_PATH
-from typing import List, Type
+from typing import List, Tuple, Type
 
 
 class DbusStagedChangesCommitted(DbusEvent):
@@ -46,7 +46,17 @@ class DbusStagedChangesCommitted(DbusEvent):
         """
         Creates a new DbusStagedChangesCommitted.
         """
-        super().__init__("Pythoneda_Artifact_StagedChangesCommitted", DBUS_PATH)
+        super().__init__(DBUS_PATH)
+
+    @classmethod
+    @property
+    def name(cls) -> str:
+        """
+        Retrieves the d-bus interface name.
+        :return: Such value.
+        :rtype: str
+        """
+        return "Pythoneda_Artifact_StagedChangesCommitted"
 
     @signal()
     def StagedChangesCommitted(self, change: "s"):
@@ -71,6 +81,7 @@ class DbusStagedChangesCommitted(DbusEvent):
             event.change.to_json(),
             event.commit,
             json.dumps(event.previous_event_ids),
+            Invariants.instance().to_json(event),
             event.id,
         ]
 
@@ -83,24 +94,31 @@ class DbusStagedChangesCommitted(DbusEvent):
         :return: The signature.
         :rtype: str
         """
-        return "sssss"
+        return "ssssss"
 
     @classmethod
-    def parse(cls, message: Message) -> StagedChangesCommitted:
+    def parse(
+        cls, message: Message, app: PythonedaApplication
+    ) -> Tuple[str, StagedChangesCommitted]:
         """
         Parses given d-bus message containing a StagedChangesCommitted event.
         :param message: The message.
         :type message: dbus_next.Message
-        :return: The StagedChangesCommitted event.
-        :rtype: pythoneda.shared.artifact.events.StagedChangesCommitted
+        :param app: The PythonEDA instance.
+        :type app: pythoneda.shared.PythonedaApplication
+        :return: A tuple with the invariants and the StagedChangesCommitted event.
+        :rtype: Tuple[str, pythoneda.shared.artifact.events.StagedChangesCommitted]
         """
-        msg, change_json, commit, prev_event_ids, event_id = message.body
-        return StagedChangesCommitted(
-            msg,
-            Change.from_json(change_json),
-            commit,
-            json.loads(prev_event_ids),
-            event_id,
+        msg, change_json, commit, prev_event_ids, invariants, event_id = message.body
+        return (
+            invariants,
+            StagedChangesCommitted(
+                msg,
+                Change.from_json(change_json),
+                commit,
+                json.loads(prev_event_ids),
+                event_id,
+            ),
         )
 
     @classmethod

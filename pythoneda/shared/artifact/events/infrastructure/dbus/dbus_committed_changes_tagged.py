@@ -22,11 +22,11 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 from dbus_next import Message
 from dbus_next.service import signal
 import json
-from pythoneda.shared import Event
+from pythoneda.shared import Event, Invariants, PythonedaApplication
 from pythoneda.shared.infrastructure.dbus import DbusEvent
 from pythoneda.shared.artifact.events import CommittedChangesTagged
 from pythoneda.shared.artifact.events.infrastructure.dbus import DBUS_PATH
-from typing import List, Type
+from typing import List, Tuple, Type
 
 
 class DbusCommittedChangesTagged(DbusEvent):
@@ -46,7 +46,17 @@ class DbusCommittedChangesTagged(DbusEvent):
         """
         Creates a new DbusCommittedChangesTagged.
         """
-        super().__init__("Pythoneda_Artifact_CommittedChangesTagged", DBUS_PATH)
+        super().__init__(DBUS_PATH)
+
+    @classmethod
+    @property
+    def name(cls) -> str:
+        """
+        Retrieves the d-bus interface name.
+        :return: Such value.
+        :rtype: str
+        """
+        return "Pythoneda_Artifact_CommittedChangesTagged"
 
     @signal()
     def CommittedChangesTagged(self, commit: "s"):
@@ -73,6 +83,7 @@ class DbusCommittedChangesTagged(DbusEvent):
             event.branch,
             event.repository_folder,
             json.dumps(event.previous_event_ids),
+            Invariants.instance().to_json(event),
             event.id,
         ]
 
@@ -85,16 +96,20 @@ class DbusCommittedChangesTagged(DbusEvent):
         :return: The signature.
         :rtype: str
         """
-        return "sssssss"
+        return "ssssssss"
 
     @classmethod
-    def parse(cls, message: Message) -> CommittedChangesTagged:
+    def parse(
+        cls, message: Message, app: PythonedaApplication
+    ) -> Tuple[str, CommittedChangesTagged]:
         """
         Parses given d-bus message containing a CommittedChangesTagged event.
         :param message: The message.
         :type message: dbus_next.Message
-        :return: The CommittedChangesPushed event.
-        :rtype: pythoneda.shared.artifact.events.CommittedChangesTagged
+        :param app: The PythonEDA instance.
+        :type app: pythoneda.shared.PythonedaApplication
+        :return: A tuple with the invariants and the CommittedChangesTagged event.
+        :rtype: Tuple[str, pythoneda.shared.artifact.events.CommittedChangesTagged]
         """
         (
             tag,
@@ -103,16 +118,20 @@ class DbusCommittedChangesTagged(DbusEvent):
             branch,
             folder,
             prev_event_ids,
+            invariants,
             event_id,
         ) = message.body
-        return CommittedChangesTagged(
-            tag,
-            commit,
-            repository_url,
-            branch,
-            folder,
-            json.loads(prev_event_ids),
-            event_id,
+        return (
+            invariants,
+            CommittedChangesTagged(
+                tag,
+                commit,
+                repository_url,
+                branch,
+                folder,
+                json.loads(prev_event_ids),
+                event_id,
+            ),
         )
 
     @classmethod

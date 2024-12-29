@@ -22,11 +22,11 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 from dbus_next import Message
 from dbus_next.service import signal
 import json
-from pythoneda.shared import Event
+from pythoneda.shared import Event, Invariants, PythonedaApplication
 from pythoneda.shared.infrastructure.dbus import DbusEvent
 from pythoneda.shared.artifact.events import TagPushed
 from pythoneda.shared.artifact.events.infrastructure.dbus import DBUS_PATH
-from typing import List, Type
+from typing import List, Tuple, Type
 
 
 class DbusTagPushed(DbusEvent):
@@ -46,7 +46,17 @@ class DbusTagPushed(DbusEvent):
         """
         Creates a new DbusTagPushed.
         """
-        super().__init__("Pythoneda_Artifact_TagPushed", DBUS_PATH)
+        super().__init__(DBUS_PATH)
+
+    @classmethod
+    @property
+    def name(cls) -> str:
+        """
+        Retrieves the d-bus interface name.
+        :return: Such value.
+        :rtype: str
+        """
+        return "Pythoneda_Artifact_TagPushed"
 
     @signal()
     def TagPushed(self, tag: "s", commit: "s", repositoryUrl: "s", branch: "s"):
@@ -79,6 +89,7 @@ class DbusTagPushed(DbusEvent):
             event.repository_url,
             event.branch,
             json.dumps(event.previous_event_ids),
+            Invariants.instance().to_json(event),
             event.id,
         ]
 
@@ -91,25 +102,34 @@ class DbusTagPushed(DbusEvent):
         :return: The signature.
         :rtype: str
         """
-        return "ssssss"
+        return "sssssss"
 
     @classmethod
-    def parse(cls, message: Message) -> TagPushed:
+    def parse(
+        cls, message: Message, app: PythonedaApplication
+    ) -> Tuple[str, TagPushed]:
         """
         Parses given d-bus message containing a TagPushed event.
         :param message: The message.
         :type message: dbus_next.Message
-        :return: The TagPushed event.
-        :rtype: pythoneda.shared.artifact.events.TagPushed
+        :param app: The PythonEDA instance.
+        :type app: pythoneda.shared.PythonedaApplication
+        :return: A tuple with the invariants and the TagPushed event.
+        :rtype: Tuple[str, pythoneda.shared.artifact.events.TagPushed]
         """
-        tag, commit, repository_url, branch, prev_event_ids, event_id = message.body
-        return TagPushed(
-            tag,
-            commit,
-            repository_url,
-            branch,
-            json.loads(prev_event_ids),
-            event_id,
+        tag, commit, repository_url, branch, prev_event_ids, invariants, event_id = (
+            message.body
+        )
+        return (
+            invariants,
+            TagPushed(
+                tag,
+                commit,
+                repository_url,
+                branch,
+                json.loads(prev_event_ids),
+                event_id,
+            ),
         )
 
     @classmethod

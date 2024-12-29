@@ -22,11 +22,11 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 from dbus_next import Message
 from dbus_next.service import signal
 import json
-from pythoneda.shared import Event
+from pythoneda.shared import Event, Invariants, PythonedaApplication
 from pythoneda.shared.infrastructure.dbus import DbusEvent
 from pythoneda.shared.artifact.events import Change, ChangeStaged
 from pythoneda.shared.artifact.events.infrastructure.dbus import DBUS_PATH
-from typing import List, Type
+from typing import List, Tuple, Type
 
 
 class DbusChangeStaged(DbusEvent):
@@ -46,7 +46,17 @@ class DbusChangeStaged(DbusEvent):
         """
         Creates a new DbusChangeStaged.
         """
-        super().__init__("Pythoneda_Artifact_ChangeStaged", DBUS_PATH)
+        super().__init__(DBUS_PATH)
+
+    @classmethod
+    @property
+    def name(cls) -> str:
+        """
+        Retrieves the d-bus interface name.
+        :return: Such value.
+        :rtype: str
+        """
+        return "Pythoneda_Artifact_ChangeStaged"
 
     @signal()
     def ChangeStaged(self, change: "s"):
@@ -66,7 +76,12 @@ class DbusChangeStaged(DbusEvent):
         :return: The event information.
         :rtype: List[str]
         """
-        return [event.change.to_json(), json.dumps(event.previous_event_ids), event.id]
+        return [
+            event.change.to_json(),
+            json.dumps(event.previous_event_ids),
+            Invariants.instance().to_json(event),
+            event.id,
+        ]
 
     @classmethod
     def sign(cls, event: ChangeStaged) -> str:
@@ -77,20 +92,27 @@ class DbusChangeStaged(DbusEvent):
         :return: The signature.
         :rtype: str
         """
-        return "sss"
+        return "ssss"
 
     @classmethod
-    def parse(cls, message: Message) -> ChangeStaged:
+    def parse(
+        cls, message: Message, app: PythonedaApplication
+    ) -> Tuple[str, ChangeStaged]:
         """
         Parses given d-bus message containing a ChangeStaged event.
         :param message: The message.
         :type message: dbus_next.Message
-        :return: The ChangeStaged event.
-        :rtype: pythoneda.shared.artifact.events.ChangeStaged
+        :param app: The PythonEDA instance.
+        :type app: pythoneda.shared.PythonedaApplication
+        :return: A tuple with the invariants and the ChangeStaged event.
+        :rtype: Tuple[str, pythoneda.shared.artifact.events.ChangeStaged]
         """
-        change, prev_event_ids, event_id = message.body
-        return ChangeStaged(
-            Change.from_json(change), json.loads(prev_event_ids), event_id
+        change, prev_event_ids, invariants, event_id = message.body
+        return (
+            invariants,
+            ChangeStaged(
+                Change.from_json(change), json.loads(prev_event_ids), event_id
+            ),
         )
 
     @classmethod
