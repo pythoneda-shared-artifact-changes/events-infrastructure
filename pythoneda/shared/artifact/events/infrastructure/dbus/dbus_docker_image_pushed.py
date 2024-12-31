@@ -82,7 +82,6 @@ class DbusDockerImagePushed(DbusEvent):
         """
         pass
 
-    @property
     def build_path(self, event: Event) -> str:
         """
         Retrieves the d-bus path for given event.
