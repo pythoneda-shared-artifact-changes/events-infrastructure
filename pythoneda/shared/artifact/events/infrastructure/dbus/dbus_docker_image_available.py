@@ -79,7 +79,7 @@ class DbusDockerImageAvailable(DbusEvent):
         :return: Such value.
         :rtype: str
         """
-        return DBUS_PATH + "/" + event.image_name.replace("-", "_")
+        return DBUS_PATH + "/" + self.sanitize_path(event.image_name)
 
     @classmethod
     def transform(cls, event: DockerImageAvailable) -> List[str]:

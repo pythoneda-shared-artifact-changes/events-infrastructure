@@ -85,7 +85,7 @@ class DbusDockerImagePushRequested(DbusEvent):
         :return: Such value.
         :rtype: str
         """
-        return self.path + "/" + event.image_name.replace("-", "_")
+        return self.path + "/" + self.sanitize_path(event.image_name)
 
     @classmethod
     def transform(cls, event: DockerImagePushRequested) -> List[str]:
